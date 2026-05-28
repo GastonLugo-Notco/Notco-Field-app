@@ -1,1 +1,829 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f1a">
+<title>Notco Field App</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0f1a;--surface:#1a1a2e;--surface2:#22223a;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--text:#f0f0f8;--text2:rgba(240,240,248,0.55);--text3:rgba(240,240,248,0.3);--green:#1db97a;--green-dim:rgba(29,185,122,0.12);--green-border:rgba(29,185,122,0.3);--amber:#f5a623;--amber-dim:rgba(245,166,35,0.1);--red:#e85d5d;--red-dim:rgba(232,93,93,0.1);--accent:#6c63ff;--accent-dim:rgba(108,99,255,0.12);--radius:14px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+.header{padding:48px 20px 0;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.logo-text{font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.logo-sub{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:1px}
+.progress-bar{height:2px;background:var(--border);margin-top:14px;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:99px;transition:width 0.4s cubic-bezier(.4,0,.2,1)}
+.nav{display:flex;gap:0;margin-top:10px}
+.nav-item{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:500;border-radius:var(--radius-sm) var(--radius-sm) 0 0;cursor:pointer;color:var(--text2);transition:all 0.2s}
+.nav-item.active{background:var(--bg);color:var(--accent)}
+.nav-item svg{display:block;margin:0 auto 3px}
+.content{flex:1;padding:20px;overflow-y:auto}
+.view{display:none}.view.active{display:block}
+.step-header{margin-bottom:20px}
+.step-badge{display:inline-flex;align-items:center;font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(108,99,255,0.2);padding:4px 10px;border-radius:99px;margin-bottom:10px}
+.step-title{font-size:22px;font-weight:600;letter-spacing:-0.5px;line-height:1.2}
+.step-sub{font-size:13px;color:var(--text2);margin-top:5px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-label{font-size:11px;font-weight:500;letter-spacing:0.5px;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+.field{margin-bottom:16px}.field:last-child{margin-bottom:0}
+.field-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:block}
+.req{color:var(--red);margin-left:2px}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:11px 14px;outline:none;transition:border-color 0.2s;-webkit-appearance:none;appearance:none}
+input[type=date]{color-scheme:dark}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(240,240,248,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+select option{background:#1a1a2e}
+textarea{resize:none;line-height:1.5}
+.radio-group{display:flex;gap:8px}
+.radio-opt{flex:1;padding:10px;text-align:center;border-radius:var(--radius-sm);border:1px solid var(--border2);font-size:14px;font-weight:500;cursor:pointer;color:var(--text2);background:var(--surface2);transition:all 0.15s}
+.radio-opt.sel-si{background:var(--green-dim);color:var(--green);border-color:var(--green-border)}
+.radio-opt.sel-no{background:rgba(255,255,255,0.04);color:var(--text);border-color:var(--border2)}
+.share-meter{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;margin-top:12px}
+.share-meter-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}
+.share-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.share-row:last-child{margin-bottom:0}
+.share-brand{font-size:12px;color:var(--text2);width:90px;flex-shrink:0;font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.share-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.share-fill-bar{height:100%;border-radius:99px;transition:width 0.4s,background 0.4s}
+.share-pct{font-size:13px;font-weight:600;width:38px;text-align:right;font-family:'DM Mono',monospace}
+.share-total-row{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
+.share-total-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.share-total-val{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
+/* FOTO */
+.foto-area{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color 0.2s;position:relative;overflow:hidden}
+.foto-area:hover{border-color:var(--accent)}
+.foto-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.foto-icon{font-size:28px;margin-bottom:6px}
+.foto-label{font-size:13px;color:var(--text2)}
+.foto-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.foto-preview{width:100%;border-radius:var(--radius-sm);margin-top:10px;max-height:180px;object-fit:cover;display:none}
+.btn-primary{width:100%;padding:15px;border:none;border-radius:var(--radius);background:var(--green);color:#0f0f1a;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:active{transform:scale(0.98)}.btn-primary:disabled{opacity:0.5}
+.btn-secondary{width:100%;padding:13px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.btn-back{width:48px;flex-shrink:0;padding:13px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.tag{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace}
+.tag-green{background:var(--green-dim);color:var(--green)}
+.tag-amber{background:var(--amber-dim);color:var(--amber)}
+.tag-red{background:var(--red-dim);color:var(--red)}
+.tag-gray{background:var(--surface2);color:var(--text2)}
+.success-screen{text-align:center;padding:40px 20px}
+.success-icon{font-size:64px;margin-bottom:16px}
+.success-title{font-size:26px;font-weight:600;letter-spacing:-0.5px}
+.success-sub{font-size:14px;color:var(--text2);margin-top:8px;line-height:1.6}
+.visit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.visit-top{display:flex;justify-content:space-between;align-items:flex-start}
+.visit-title{font-size:15px;font-weight:500}
+.visit-date{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.visit-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.stat-val{font-size:28px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-1px}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:4px}
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:12px}.empty p{font-size:14px}
+.spinner{width:18px;height:18px;border:2px solid rgba(15,15,26,0.3);border-top-color:#0f0f1a;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:12px 20px;border-radius:99px;font-size:13px;font-weight:500;white-space:nowrap;transition:transform 0.3s cubic-bezier(.4,0,.2,1);z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.razon-wrap{margin-top:10px;display:none}
+.config-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.config-row:last-child{border-bottom:none}
+.config-label{font-size:14px}.config-sub{font-size:12px;color:var(--text2);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-text">Notco Field</div>
+        <div class="logo-sub" id="header-date">—</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--green);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:5px">
+      <div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></div>
+      <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}</style>
+      Notco 2025
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="nav">
+    <div class="nav-item active" onclick="switchView('form')" id="nav-form">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Nueva
+    </div>
+    <div class="nav-item" onclick="switchView('historial')" id="nav-historial">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial
+    </div>
+    <div class="nav-item" onclick="switchView('stats')" id="nav-stats">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Stats
+    </div>
+    <div class="nav-item" onclick="switchView('config')" id="nav-config">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Config
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══ FORM ═══ -->
+<div class="view active" id="view-form">
+
+  <!-- PASO 1 -->
+  <div id="paso-1">
+    <div class="step-header">
+      <div class="step-badge">Paso 1 de 5</div>
+      <div class="step-title">Datos de la visita</div>
+      <div class="step-sub">Información general de la tienda</div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">Fecha <span class="req">*</span></label>
+        <input type="date" id="f-fecha">
+      </div>
+      <div class="field">
+        <label class="field-label">Field <span class="req">*</span></label>
+        <select id="f-field">
+          <option value="Gaston Lugo">Gastón Lugo</option>
+          <option value="Javier Zima">Javier Zima</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label">Cadena <span class="req">*</span></label>
+        <select id="f-cadena">
+          <option value="">Seleccionar cadena...</option>
+          <option>Jumbo</option><option>Disco</option><option>Vea</option>
+          <option>Coto</option><option>Carrefour</option><option>Changomas</option>
+          <option>Makro</option><option>Vital</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label">Número de sucursal <span class="req">*</span></label>
+        <input type="text" id="f-sucursal" placeholder="ej. 47">
+      </div>
+      <div class="field">
+        <label class="field-label">Punto de contacto en tienda</label>
+        <input type="text" id="f-contacto" placeholder="Nombre del encargado">
+      </div>
+      <div class="field">
+        <label class="field-label">¿Pasó el repo / control fichaje?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-repo-si" onclick="setRadio('repo','si')">Sí</div>
+          <div class="radio-opt" id="ro-repo-no" onclick="setRadio('repo','no')">No</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Observaciones generales</label>
+        <textarea id="f-obs-gen" rows="2" placeholder="Notas libres..."></textarea>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="irPaso(2)">Siguiente →</button>
+  </div>
+
+  <!-- PASO 2: Barras -->
+  <div id="paso-2" style="display:none">
+    <div class="step-header">
+      <div class="step-badge">Paso 2 de 5</div>
+      <div class="step-title">Barras proteicas</div>
+      <div class="step-sub">Ingresá los frentes — el share se calcula solo</div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">Total frentes categoría</label>
+        <input type="number" id="f-b-total" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="field">
+        <label class="field-label">Frentes NotCo</label>
+        <input type="number" id="f-b-notco" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Competencia</div>
+      <div class="field">
+        <label class="field-label">Integra</label>
+        <input type="number" id="f-b-integra" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="field">
+        <label class="field-label">Otros</label>
+        <input type="number" id="f-b-otros" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="share-meter">
+        <div class="share-meter-title">Share de góndola — Barras</div>
+        <div id="sm-b-rows"><div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div></div>
+        <div class="share-total-row">
+          <span class="share-total-label">Total relevado</span>
+          <span class="share-total-val" id="sm-b-total">0 frentes</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">¿Hay quiebre?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-qb-si" onclick="setRadio('qb','si')">Sí</div>
+          <div class="radio-opt" id="ro-qb-no" onclick="setRadio('qb','no')">No</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">¿Respeta planograma?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-pb-si" onclick="setRadio('pb','si')">Sí</div>
+          <div class="radio-opt" id="ro-pb-no" onclick="setRadio('pb','no')">No</div>
+        </div>
+        <div class="razon-wrap" id="rw-pb">
+          <input type="text" id="f-pb-razon" placeholder="Razón del incumplimiento...">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">📷 Foto exhibición barras</label>
+        <div class="foto-area" onclick="triggerFoto('foto-b')">
+          <input type="file" id="foto-b" accept="image/*" capture="environment" onchange="previewFoto('foto-b','prev-b')">
+          <div class="foto-icon">📸</div>
+          <div class="foto-label">Sacar foto o elegir de galería</div>
+          <div class="foto-sub">Toca para abrir cámara o galería</div>
+        </div>
+        <img id="prev-b" class="foto-preview">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="irPaso(1)">←</button>
+      <button class="btn-primary" style="flex:1" onclick="irPaso(3)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 3: Milanesas -->
+  <div id="paso-3" style="display:none">
+    <div class="step-header">
+      <div class="step-badge">Paso 3 de 5</div>
+      <div class="step-title">Milanesas saludables</div>
+      <div class="step-sub">Categoría congelados</div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">Total puertas categoría</label>
+        <input type="number" id="f-m-total" placeholder="0" min="0" oninput="calcShare('m')">
+      </div>
+      <div class="field">
+        <label class="field-label">Puertas NotCo</label>
+        <input type="number" id="f-m-notco" placeholder="0" min="0" oninput="calcShare('m')">
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Competencia</div>
+      <div class="field">
+        <label class="field-label">Vegetalex</label>
+        <input type="number" id="f-m-veg" placeholder="0" min="0" oninput="calcShare('m')">
+      </div>
+      <div class="field">
+        <label class="field-label">Granja del Sol</label>
+        <input type="number" id="f-m-gds" placeholder="0" min="0" oninput="calcShare('m')">
+      </div>
+      <div class="field">
+        <label class="field-label">Otros</label>
+        <input type="number" id="f-m-otros" placeholder="0" min="0" oninput="calcShare('m')">
+      </div>
+      <div class="share-meter">
+        <div class="share-meter-title">Share de góndola — Milanesas</div>
+        <div id="sm-m-rows"><div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div></div>
+        <div class="share-total-row">
+          <span class="share-total-label">Total relevado</span>
+          <span class="share-total-val" id="sm-m-total">0 puertas</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">¿Hay quiebre?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-qm-si" onclick="setRadio('qm','si')">Sí</div>
+          <div class="radio-opt" id="ro-qm-no" onclick="setRadio('qm','no')">No</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">¿Respeta planograma?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-pm-si" onclick="setRadio('pm','si')">Sí</div>
+          <div class="radio-opt" id="ro-pm-no" onclick="setRadio('pm','no')">No</div>
+        </div>
+        <div class="razon-wrap" id="rw-pm">
+          <input type="text" id="f-pm-razon" placeholder="Razón del incumplimiento...">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Observaciones</label>
+        <textarea id="f-obs-mil" rows="2" placeholder="Notas..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">📷 Foto exhibición milanesas</label>
+        <div class="foto-area" onclick="triggerFoto('foto-m')">
+          <input type="file" id="foto-m" accept="image/*" capture="environment" onchange="previewFoto('foto-m','prev-m')">
+          <div class="foto-icon">📸</div>
+          <div class="foto-label">Sacar foto o elegir de galería</div>
+          <div class="foto-sub">Toca para abrir cámara o galería</div>
+        </div>
+        <img id="prev-m" class="foto-preview">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="irPaso(2)">←</button>
+      <button class="btn-primary" style="flex:1" onclick="irPaso(4)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 4: Leches -->
+  <div id="paso-4" style="display:none">
+    <div class="step-header">
+      <div class="step-badge">Paso 4 de 5</div>
+      <div class="step-title">Leches vegetales</div>
+      <div class="step-sub">Categoría leches</div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">Total frentes categoría leches vegetales</label>
+        <input type="number" id="f-l-total" placeholder="0" min="0" oninput="calcShare('l')">
+      </div>
+      <div class="field">
+        <label class="field-label">Frentes NotCo</label>
+        <input type="number" id="f-l-notco" placeholder="0" min="0" oninput="calcShare('l')">
+      </div>
+      <div class="field">
+        <label class="field-label">Frentes Competencia</label>
+        <input type="number" id="f-l-comp" placeholder="0" min="0" oninput="calcShare('l')">
+      </div>
+      <div class="share-meter">
+        <div class="share-meter-title">Share de góndola — Leches</div>
+        <div id="sm-l-rows"><div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div></div>
+        <div class="share-total-row">
+          <span class="share-total-label">Total relevado</span>
+          <span class="share-total-val" id="sm-l-total">0 frentes</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">¿Hay quiebre?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-ql-si" onclick="setRadio('ql','si')">Sí</div>
+          <div class="radio-opt" id="ro-ql-no" onclick="setRadio('ql','no')">No</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">¿Respeta planograma?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-pl-si" onclick="setRadio('pl','si')">Sí</div>
+          <div class="radio-opt" id="ro-pl-no" onclick="setRadio('pl','no')">No</div>
+        </div>
+        <div class="razon-wrap" id="rw-pl">
+          <input type="text" id="f-pl-razon" placeholder="Razón del incumplimiento...">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Observaciones</label>
+        <textarea id="f-obs-lec" rows="2" placeholder="Notas..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">📷 Foto exhibición leches</label>
+        <div class="foto-area" onclick="triggerFoto('foto-l')">
+          <input type="file" id="foto-l" accept="image/*" capture="environment" onchange="previewFoto('foto-l','prev-l')">
+          <div class="foto-icon">📸</div>
+          <div class="foto-label">Sacar foto o elegir de galería</div>
+          <div class="foto-sub">Toca para abrir cámara o galería</div>
+        </div>
+        <img id="prev-l" class="foto-preview">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="irPaso(3)">←</button>
+      <button class="btn-primary" style="flex:1" onclick="irPaso(5)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 5: Oportunidades -->
+  <div id="paso-5" style="display:none">
+    <div class="step-header">
+      <div class="step-badge">Paso 5 de 5</div>
+      <div class="step-title">Oportunidades</div>
+      <div class="step-sub">Último paso — casi listo 💪</div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">¿Oportunidad de pedido?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-op-si" onclick="setRadio('op','si')">Sí</div>
+          <div class="radio-opt" id="ro-op-no" onclick="setRadio('op','no')">No</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Punteras</label>
+        <textarea id="f-punteras" rows="2" placeholder="Punteras activas o disponibles..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Exhibiciones adicionales / cruzadas</label>
+        <textarea id="f-exhib" rows="2" placeholder="Detallar exhibiciones adicionales..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Notas finales / oportunidades detectadas</label>
+        <textarea id="f-notas" rows="3" placeholder="Cualquier observación relevante..."></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="irPaso(4)">←</button>
+      <button class="btn-primary" style="flex:1;background:var(--green)" id="btn-guardar" onclick="guardarVisita()">
+        <span id="btn-txt">Guardar visita</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="paso-ok" style="display:none">
+    <div class="success-screen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">¡Visita guardada!</div>
+      <div class="success-sub" id="ok-sub">Los datos se registraron correctamente.</div>
+      <button class="btn-primary" style="margin-top:28px" onclick="nuevaVisita()">Nueva visita</button>
+      <button class="btn-secondary" style="margin-top:10px" onclick="exportCSV()">Exportar CSV</button>
+    </div>
+  </div>
+
+</div><!-- /view-form -->
+
+<!-- ═══ HISTORIAL ═══ -->
+<div class="view" id="view-historial">
+  <div class="step-header">
+    <div class="step-title">Historial</div>
+    <div class="step-sub">Visitas de esta sesión</div>
+  </div>
+  <div id="historial-content">
+    <div class="empty"><div class="empty-icon">📋</div><p>Aún no hay visitas registradas</p></div>
+  </div>
+  <button class="btn-secondary" onclick="exportCSV()" style="margin-top:12px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exportar CSV
+  </button>
+</div>
+
+<!-- ═══ STATS ═══ -->
+<div class="view" id="view-stats">
+  <div class="step-header">
+    <div class="step-title">Estadísticas</div>
+    <div class="step-sub">Resumen de la sesión</div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-val" id="st-visitas">0</div><div class="stat-lbl">Visitas</div></div>
+    <div class="stat-box"><div class="stat-val" id="st-quiebres">0</div><div class="stat-lbl">Quiebres</div></div>
+    <div class="stat-box"><div class="stat-val" id="st-sb">—</div><div class="stat-lbl">Share barras</div></div>
+    <div class="stat-box"><div class="stat-val" id="st-sm">—</div><div class="stat-lbl">Share milanesas</div></div>
+    <div class="stat-box"><div class="stat-val" id="st-sl">—</div><div class="stat-lbl">Share leches</div></div>
+    <div class="stat-box"><div class="stat-val" id="st-op">—</div><div class="stat-lbl">Oport. pedido</div></div>
+  </div>
+  <div class="card" id="stats-cadenas">
+    <div class="card-label">Visitas por cadena</div>
+    <p style="font-size:13px;color:var(--text3)">Sin datos aún.</p>
+  </div>
+</div>
+
+<!-- ═══ CONFIG ═══ -->
+<div class="view" id="view-config">
+  <div class="step-header">
+    <div class="step-title">Configuración</div>
+    <div class="step-sub">Ajustes de la app</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Mi perfil</div>
+    <div class="field">
+      <label class="field-label">Soy</label>
+      <select id="cfg-field">
+        <option value="Gaston Lugo">Gastón Lugo</option>
+        <option value="Javier Zima">Javier Zima</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="margin-top:10px;font-size:13px;padding:11px" onclick="guardarPerfil()">Guardar preferencia</button>
+  </div>
+  <div class="card">
+    <div class="card-label">Cómo usar</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.8">
+      1. Completá el formulario en 5 pasos<br>
+      2. Al guardar, descargá el CSV<br>
+      3. Abrí el CSV en Excel — cada campo en su columna<br>
+      4. Agregá esta página al home screen del celu para acceso rápido
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:24px">
+    <p style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">Notco Field App v2.0 · 2025</p>
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+let visitas=[], radios={}, pasoActual=1;
+
+// ══ INIT ══
+function init(){
+  const now=new Date();
+  document.getElementById('header-date').textContent=now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  // Fecha de hoy por defecto
+  const hoy=now.toISOString().split('T')[0];
+  document.getElementById('f-fecha').value=hoy;
+  // Perfil guardado
+  const sf=localStorage.getItem('notco_field');
+  if(sf){document.getElementById('f-field').value=sf;document.getElementById('cfg-field').value=sf;}
+}
+
+// ══ NAV ══
+function switchView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('nav-'+v).classList.add('active');
+  if(v==='historial')renderHistorial();
+  if(v==='stats')renderStats();
+}
+
+// ══ STEPS ══
+function irPaso(n){
+  if(n>pasoActual&&!validarPaso(pasoActual))return;
+  document.getElementById('paso-'+pasoActual).style.display='none';
+  pasoActual=n;
+  document.getElementById('paso-'+n).style.display='block';
+  document.getElementById('progress-fill').style.width=(((n-1)/5)*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validarPaso(p){
+  if(p===1){
+    if(!document.getElementById('f-fecha').value){showToast('Seleccioná la fecha');return false;}
+    if(!document.getElementById('f-cadena').value){showToast('Seleccioná una cadena');return false;}
+    if(!document.getElementById('f-sucursal').value.trim()){showToast('Ingresá el número de sucursal');return false;}
+  }
+  return true;
+}
+
+// ══ RADIO ══
+function setRadio(group,val){
+  radios[group]=val;
+  const si=document.getElementById('ro-'+group+'-si');
+  const no=document.getElementById('ro-'+group+'-no');
+  if(si)si.className='radio-opt'+(val==='si'?' sel-si':'');
+  if(no)no.className='radio-opt'+(val==='no'?' sel-no':'');
+  const razonMap={pb:'rw-pb',pm:'rw-pm',pl:'rw-pl'};
+  if(razonMap[group])document.getElementById(razonMap[group]).style.display=val==='no'?'block':'none';
+}
+
+// ══ FOTO ══
+function triggerFoto(id){
+  // El click ya lo maneja el input file, no hacemos nada extra
+}
+function previewFoto(inputId,previewId){
+  const file=document.getElementById(inputId).files[0];
+  const prev=document.getElementById(previewId);
+  if(file){
+    const url=URL.createObjectURL(file);
+    prev.src=url;
+    prev.style.display='block';
+    // Actualizar el área de foto
+    const area=document.getElementById(inputId).parentElement;
+    area.querySelector('.foto-icon').textContent='✅';
+    area.querySelector('.foto-label').textContent='Foto cargada';
+    area.querySelector('.foto-sub').textContent=file.name;
+  }
+}
+
+// ══ SHARE ══
+const SHARE_CFG={
+  b:{
+    brands:[{id:'f-b-notco',label:'NotCo',isNotco:true},{id:'f-b-integra',label:'Integra',isNotco:false},{id:'f-b-otros',label:'Otros',isNotco:false}],
+    total:'f-b-total',rows:'sm-b-rows',totalEl:'sm-b-total',unit:'frentes'
+  },
+  m:{
+    brands:[{id:'f-m-notco',label:'NotCo',isNotco:true},{id:'f-m-veg',label:'Vegetalex',isNotco:false},{id:'f-m-gds',label:'Granja del Sol',isNotco:false},{id:'f-m-otros',label:'Otros',isNotco:false}],
+    total:'f-m-total',rows:'sm-m-rows',totalEl:'sm-m-total',unit:'puertas'
+  },
+  l:{
+    brands:[{id:'f-l-notco',label:'NotCo',isNotco:true},{id:'f-l-comp',label:'Competencia',isNotco:false}],
+    total:'f-l-total',rows:'sm-l-rows',totalEl:'sm-l-total',unit:'frentes'
+  }
+};
+
+function calcShare(cat){
+  const cfg=SHARE_CFG[cat];
+  const total=parseFloat(document.getElementById(cfg.total).value)||0;
+  const vals=cfg.brands.map(b=>({...b,val:parseFloat(document.getElementById(b.id).value)||0}));
+  const sumIngresado=vals.reduce((a,b)=>a+b.val,0);
+  const base=total>0?total:sumIngresado;
+  const rowsEl=document.getElementById(cfg.rows);
+  document.getElementById(cfg.totalEl).textContent=base+' '+cfg.unit+(total>0?' (cat. total)':'');
+  if(base===0){rowsEl.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div>';return;}
+  rowsEl.innerHTML=vals.filter(b=>b.val>0||b.isNotco).map(b=>{
+    const pct=Math.round((b.val/base)*100);
+    const color=b.isNotco?(pct>=40?'var(--green)':pct>=20?'var(--amber)':'var(--red)'):'rgba(240,240,248,0.25)';
+    return`<div class="share-row">
+      <span class="share-brand">${b.label}</span>
+      <div class="share-track"><div class="share-fill-bar" style="width:${Math.min(pct,100)}%;background:${color}"></div></div>
+      <span class="share-pct" style="color:${color}">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+function getShareNotco(cat){
+  const cfg=SHARE_CFG[cat];
+  const total=parseFloat(document.getElementById(cfg.total).value)||0;
+  const notcoVal=parseFloat(document.getElementById(cfg.brands[0].id).value)||0;
+  const compSum=cfg.brands.slice(1).reduce((a,b)=>a+(parseFloat(document.getElementById(b.id).value)||0),0);
+  const base=total>0?total:(notcoVal+compSum);
+  return base>0?Math.round((notcoVal/base)*100):null;
+}
+
+// ══ GUARDAR ══
+async function guardarVisita(){
+  const btn=document.getElementById('btn-guardar');
+  const txt=document.getElementById('btn-txt');
+  btn.disabled=true;txt.innerHTML='<div class="spinner"></div>';
+
+  const v={
+    id:Date.now(),
+    fecha:document.getElementById('f-fecha').value,
+    field:document.getElementById('f-field').value,
+    cadena:document.getElementById('f-cadena').value||'—',
+    sucursal:document.getElementById('f-sucursal').value,
+    contacto:document.getElementById('f-contacto').value,
+    repo:radios['repo']||'—',
+    obsGen:document.getElementById('f-obs-gen').value,
+    // Barras
+    bTotal:document.getElementById('f-b-total').value||0,
+    bNotco:document.getElementById('f-b-notco').value||0,
+    bIntegra:document.getElementById('f-b-integra').value||0,
+    bOtros:document.getElementById('f-b-otros').value||0,
+    shareBarras:getShareNotco('b'),
+    quiebreBarras:radios['qb']||'—',
+    planoBarras:radios['pb']||'—',
+    planoBarrasRazon:document.getElementById('f-pb-razon').value,
+    fotoBarras:document.getElementById('foto-b').files[0]?'Sí':'No',
+    // Milanesas
+    mTotal:document.getElementById('f-m-total').value||0,
+    mNotco:document.getElementById('f-m-notco').value||0,
+    mVeg:document.getElementById('f-m-veg').value||0,
+    mGds:document.getElementById('f-m-gds').value||0,
+    mOtros:document.getElementById('f-m-otros').value||0,
+    shareMil:getShareNotco('m'),
+    quiebreMil:radios['qm']||'—',
+    planoMil:radios['pm']||'—',
+    planoMilRazon:document.getElementById('f-pm-razon').value,
+    obsMil:document.getElementById('f-obs-mil').value,
+    fotoMil:document.getElementById('foto-m').files[0]?'Sí':'No',
+    // Leches
+    lTotal:document.getElementById('f-l-total').value||0,
+    lNotco:document.getElementById('f-l-notco').value||0,
+    lComp:document.getElementById('f-l-comp').value||0,
+    shareLec:getShareNotco('l'),
+    quiebreLec:radios['ql']||'—',
+    planoLec:radios['pl']||'—',
+    planoLecRazon:document.getElementById('f-pl-razon').value,
+    obsLec:document.getElementById('f-obs-lec').value,
+    fotoLec:document.getElementById('foto-l').files[0]?'Sí':'No',
+    // Oportunidades
+    oportunidad:radios['op']||'—',
+    punteras:document.getElementById('f-punteras').value,
+    exhib:document.getElementById('f-exhib').value,
+    notas:document.getElementById('f-notas').value,
+  };
+
+  visitas.push(v);
+  btn.disabled=false;txt.textContent='Guardar visita';
+  document.getElementById('paso-5').style.display='none';
+  document.getElementById('paso-ok').style.display='block';
+  document.getElementById('ok-sub').textContent='✓ Visita registrada. Podés exportar el CSV ahora o después desde Historial.';
+}
+
+// ══ RESET ══
+function nuevaVisita(){
+  radios={};pasoActual=1;
+  ['f-sucursal','f-contacto','f-obs-gen',
+   'f-b-total','f-b-notco','f-b-integra','f-b-otros','f-pb-razon',
+   'f-m-total','f-m-notco','f-m-veg','f-m-gds','f-m-otros','f-pm-razon','f-obs-mil',
+   'f-l-total','f-l-notco','f-l-comp','f-pl-razon','f-obs-lec',
+   'f-punteras','f-exhib','f-notas'
+  ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-cadena').value='';
+  document.querySelectorAll('.radio-opt').forEach(el=>el.className='radio-opt');
+  document.querySelectorAll('.razon-wrap').forEach(el=>el.style.display='none');
+  // Reset fotos
+  ['b','m','l'].forEach(cat=>{
+    const inp=document.getElementById('foto-'+cat);
+    if(inp)inp.value='';
+    const prev=document.getElementById('prev-'+cat);
+    if(prev){prev.style.display='none';prev.src='';}
+    const area=inp?inp.parentElement:null;
+    if(area){
+      area.querySelector('.foto-icon').textContent='📸';
+      area.querySelector('.foto-label').textContent='Sacar foto o elegir de galería';
+      area.querySelector('.foto-sub').textContent='Toca para abrir cámara o galería';
+    }
+    calcShare(cat);
+  });
+  document.getElementById('paso-ok').style.display='none';
+  document.getElementById('paso-1').style.display='block';
+  const hoy=new Date().toISOString().split('T')[0];
+  document.getElementById('f-fecha').value=hoy;
+  const sf=localStorage.getItem('notco_field');
+  if(sf)document.getElementById('f-field').value=sf;
+  document.getElementById('progress-fill').style.width='0%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ CSV (columnas separadas correctamente) ══
+const CSV_HEADERS=[
+  'Fecha','Field','Cadena','Sucursal','Contacto','Repo','Obs_General',
+  'Total_Cat_Barras','NotCo_Barras','Integra_Barras','Otros_Barras','Share_NotCo_Barras_%','Quiebre_Barras','Plano_Barras','Razon_Plano_Barras','Foto_Barras',
+  'Total_Cat_Milanesas','NotCo_Milanesas','Vegetalex_Milanesas','GranjaDelSol_Milanesas','Otros_Milanesas','Share_NotCo_Milanesas_%','Quiebre_Milanesas','Plano_Milanesas','Razon_Plano_Milanesas','Obs_Milanesas','Foto_Milanesas',
+  'Total_Cat_Leches','NotCo_Leches','Competencia_Leches','Share_NotCo_Leches_%','Quiebre_Leches','Plano_Leches','Razon_Plano_Leches','Obs_Leches','Foto_Leches',
+  'Oportunidad_Pedido','Punteras','Exhibiciones_Adicionales','Notas_Finales'
+];
+
+function escCSV(val){return'"'+String(val==null?'':val).replace(/"/g,'""')+'"';}
+
+function exportCSV(){
+  if(!visitas.length){showToast('No hay visitas para exportar');return;}
+  const rows=visitas.map(v=>[
+    v.fecha,v.field,v.cadena,v.sucursal,v.contacto,v.repo,v.obsGen,
+    v.bTotal,v.bNotco,v.bIntegra,v.bOtros,v.shareBarras??'',v.quiebreBarras,v.planoBarras,v.planoBarrasRazon,v.fotoBarras,
+    v.mTotal,v.mNotco,v.mVeg,v.mGds,v.mOtros,v.shareMil??'',v.quiebreMil,v.planoMil,v.planoMilRazon,v.obsMil,v.fotoMil,
+    v.lTotal,v.lNotco,v.lComp,v.shareLec??'',v.quiebreLec,v.planoLec,v.planoLecRazon,v.obsLec,v.fotoLec,
+    v.oportunidad,v.punteras,v.exhib,v.notas
+  ].map(escCSV).join(','));
+  const csv=[CSV_HEADERS.map(escCSV).join(','),...rows].join('\r\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='notco_visitas_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  showToast('✓ CSV descargado');
+}
+
+// ══ HISTORIAL ══
+function shareTagHTML(pct,label){
+  if(pct===null)return'<span class="tag tag-gray">'+label+': —</span>';
+  const cls=pct>=40?'tag-green':pct>=20?'tag-amber':'tag-red';
+  return`<span class="tag ${cls}">${label}: ${pct}%</span>`;
+}
+function renderHistorial(){
+  const el=document.getElementById('historial-content');
+  if(!visitas.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>Aún no hay visitas registradas</p></div>';return;}
+  el.innerHTML=[...visitas].reverse().map(v=>`
+    <div class="visit-card">
+      <div class="visit-top"><div class="visit-title">${v.cadena} #${v.sucursal||'?'}</div><div class="visit-date">${v.fecha}</div></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px">${v.field}</div>
+      <div class="visit-tags">
+        ${shareTagHTML(v.shareBarras,'Barras')}${shareTagHTML(v.shareMil,'Milanesas')}${shareTagHTML(v.shareLec,'Leches')}
+        ${(v.quiebreBarras==='si'||v.quiebreMil==='si'||v.quiebreLec==='si')?'<span class="tag tag-red">quiebre</span>':''}
+        ${v.oportunidad==='si'?'<span class="tag tag-green">oportunidad</span>':''}
+      </div>
+    </div>`).join('');
+}
+
+// ══ STATS ══
+function renderStats(){
+  const n=visitas.length;
+  document.getElementById('st-visitas').textContent=n;
+  document.getElementById('st-quiebres').textContent=visitas.filter(v=>v.quiebreBarras==='si'||v.quiebreMil==='si'||v.quiebreLec==='si').length;
+  const avg=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length)+'%':'—';
+  document.getElementById('st-sb').textContent=avg(visitas.filter(v=>v.shareBarras!==null).map(v=>v.shareBarras));
+  document.getElementById('st-sm').textContent=avg(visitas.filter(v=>v.shareMil!==null).map(v=>v.shareMil));
+  document.getElementById('st-sl').textContent=avg(visitas.filter(v=>v.shareLec!==null).map(v=>v.shareLec));
+  const ops=visitas.filter(v=>v.oportunidad==='si').length;
+  document.getElementById('st-op').textContent=n?ops+'/'+n:'—';
+  const cadenas={};visitas.forEach(v=>cadenas[v.cadena]=(cadenas[v.cadena]||0)+1);
+  const sc=document.getElementById('stats-cadenas');
+  if(!n){sc.innerHTML='<div class="card-label">Visitas por cadena</div><p style="font-size:13px;color:var(--text3)">Sin datos aún.</p>';return;}
+  sc.innerHTML='<div class="card-label">Visitas por cadena</div>'+Object.entries(cadenas).sort((a,b)=>b[1]-a[1]).map(([c,cnt])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)"><span>${c}</span><span style="font-weight:500">${cnt}</span></div>`).join('');
+}
+
+// ══ CONFIG ══
+function guardarPerfil(){
+  const val=document.getElementById('cfg-field').value;
+  localStorage.setItem('notco_field',val);
+  document.getElementById('f-field').value=val;
+  showToast('✓ Perfil guardado');
+}
+
+// ══ TOAST ══
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+init();
+</script>
+</body>
+</html>
