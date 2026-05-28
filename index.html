@@ -23,7 +23,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .progress-bar{height:2px;background:var(--border);margin-top:14px;border-radius:99px;overflow:hidden}
 .progress-fill{height:100%;background:var(--green);border-radius:99px;transition:width 0.4s cubic-bezier(.4,0,.2,1)}
 .nav{display:flex;gap:0;margin-top:10px}
-.nav-item{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:500;border-radius:var(--radius-sm) var(--radius-sm) 0 0;cursor:pointer;color:var(--text2);transition:all 0.2s}
+.nav-item{flex:1;padding:8px 2px;text-align:center;font-size:10px;font-weight:500;border-radius:var(--radius-sm) var(--radius-sm) 0 0;cursor:pointer;color:var(--text2);transition:all 0.2s}
 .nav-item.active{background:var(--bg);color:var(--accent)}
 .nav-item svg{display:block;margin:0 auto 3px}
 .content{flex:1;padding:20px;overflow-y:auto}
@@ -59,14 +59,12 @@ textarea{resize:none;line-height:1.5}
 .share-total-row{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
 .share-total-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
 .share-total-val{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
-/* FOTO */
-.foto-area{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color 0.2s;position:relative;overflow:hidden}
-.foto-area:hover{border-color:var(--accent)}
-.foto-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.foto-icon{font-size:28px;margin-bottom:6px}
-.foto-label{font-size:13px;color:var(--text2)}
-.foto-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.foto-preview{width:100%;border-radius:var(--radius-sm);margin-top:10px;max-height:180px;object-fit:cover;display:none}
+.foto-wrap{margin-top:4px}
+.foto-btns{display:flex;gap:8px;margin-bottom:8px}
+.foto-btn{flex:1;padding:11px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;position:relative;overflow:hidden}
+.foto-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;font-size:0}
+.foto-btn.taken{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.foto-preview{width:100%;border-radius:var(--radius-sm);max-height:160px;object-fit:cover;display:none}
 .btn-primary{width:100%;padding:15px;border:none;border-radius:var(--radius);background:var(--green);color:#0f0f1a;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-primary:active{transform:scale(0.98)}.btn-primary:disabled{opacity:0.5}
 .btn-secondary{width:100%;padding:13px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -88,8 +86,25 @@ textarea{resize:none;line-height:1.5}
 .visit-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.stat-val{font-size:28px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-1px}
+.stat-val{font-size:26px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-1px}
 .stat-lbl{font-size:11px;color:var(--text2);margin-top:4px}
+/* Dashboard */
+.dash-section{margin-bottom:20px}
+.dash-section-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}
+.dash-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dash-bar-label{font-size:12px;color:var(--text2);width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash-bar-track{flex:1;height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.dash-bar-fill{height:100%;border-radius:99px;background:var(--green);transition:width 0.5s}
+.dash-bar-pct{font-size:12px;font-weight:600;font-family:'DM Mono',monospace;width:36px;text-align:right;color:var(--text2)}
+.dash-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.dash-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.dash-kpi-val{font-size:20px;font-weight:600;font-family:'DM Mono',monospace}
+.dash-kpi-lbl{font-size:10px;color:var(--text3);margin-top:3px}
+.dash-table{width:100%;border-collapse:collapse;font-size:12px}
+.dash-table th{color:var(--text3);font-weight:500;padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase}
+.dash-table td{padding:8px;border-bottom:1px solid var(--border);color:var(--text2)}
+.dash-table tr:last-child td{border-bottom:none}
+.dash-table td:first-child{font-weight:500;color:var(--text)}
 .empty{text-align:center;padding:48px 20px;color:var(--text3)}
 .empty-icon{font-size:40px;margin-bottom:12px}.empty p{font-size:14px}
 .spinner{width:18px;height:18px;border:2px solid rgba(15,15,26,0.3);border-top-color:#0f0f1a;border-radius:50%;animation:spin 0.7s linear infinite}
@@ -98,9 +113,11 @@ textarea{resize:none;line-height:1.5}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .divider{height:1px;background:var(--border);margin:16px 0}
 .razon-wrap{margin-top:10px;display:none}
-.config-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
-.config-row:last-child{border-bottom:none}
-.config-label{font-size:14px}.config-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.sync-indicator{font-size:11px;font-family:'DM Mono',monospace;display:flex;align-items:center;gap:5px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.sheet-setup{background:var(--accent-dim);border:1px solid rgba(108,99,255,0.2);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.sheet-setup p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -115,25 +132,24 @@ textarea{resize:none;line-height:1.5}
         <div class="logo-sub" id="header-date">—</div>
       </div>
     </div>
-    <div style="font-size:12px;color:var(--green);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:5px">
-      <div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></div>
-      <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}</style>
-      Notco 2025
+    <div class="sync-indicator" id="sync-indicator">
+      <div class="sync-dot" id="sync-dot" style="background:var(--text3)"></div>
+      <span id="sync-txt" style="color:var(--text3)">sin Sheet</span>
     </div>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
   <div class="nav">
     <div class="nav-item active" onclick="switchView('form')" id="nav-form">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Nueva
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Nueva
     </div>
     <div class="nav-item" onclick="switchView('historial')" id="nav-historial">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial
     </div>
-    <div class="nav-item" onclick="switchView('stats')" id="nav-stats">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Stats
+    <div class="nav-item" onclick="switchView('dashboard')" id="nav-dashboard">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
     </div>
     <div class="nav-item" onclick="switchView('config')" id="nav-config">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Config
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Config
     </div>
   </div>
 </div>
@@ -194,80 +210,10 @@ textarea{resize:none;line-height:1.5}
     <button class="btn-primary" onclick="irPaso(2)">Siguiente →</button>
   </div>
 
-  <!-- PASO 2: Barras -->
+  <!-- PASO 2: MILANESAS -->
   <div id="paso-2" style="display:none">
     <div class="step-header">
       <div class="step-badge">Paso 2 de 5</div>
-      <div class="step-title">Barras proteicas</div>
-      <div class="step-sub">Ingresá los frentes — el share se calcula solo</div>
-    </div>
-    <div class="card">
-      <div class="field">
-        <label class="field-label">Total frentes categoría</label>
-        <input type="number" id="f-b-total" placeholder="0" min="0" oninput="calcShare('b')">
-      </div>
-      <div class="field">
-        <label class="field-label">Frentes NotCo</label>
-        <input type="number" id="f-b-notco" placeholder="0" min="0" oninput="calcShare('b')">
-      </div>
-      <div class="divider"></div>
-      <div class="card-label">Competencia</div>
-      <div class="field">
-        <label class="field-label">Integra</label>
-        <input type="number" id="f-b-integra" placeholder="0" min="0" oninput="calcShare('b')">
-      </div>
-      <div class="field">
-        <label class="field-label">Otros</label>
-        <input type="number" id="f-b-otros" placeholder="0" min="0" oninput="calcShare('b')">
-      </div>
-      <div class="share-meter">
-        <div class="share-meter-title">Share de góndola — Barras</div>
-        <div id="sm-b-rows"><div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div></div>
-        <div class="share-total-row">
-          <span class="share-total-label">Total relevado</span>
-          <span class="share-total-val" id="sm-b-total">0 frentes</span>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="field">
-        <label class="field-label">¿Hay quiebre?</label>
-        <div class="radio-group">
-          <div class="radio-opt" id="ro-qb-si" onclick="setRadio('qb','si')">Sí</div>
-          <div class="radio-opt" id="ro-qb-no" onclick="setRadio('qb','no')">No</div>
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-label">¿Respeta planograma?</label>
-        <div class="radio-group">
-          <div class="radio-opt" id="ro-pb-si" onclick="setRadio('pb','si')">Sí</div>
-          <div class="radio-opt" id="ro-pb-no" onclick="setRadio('pb','no')">No</div>
-        </div>
-        <div class="razon-wrap" id="rw-pb">
-          <input type="text" id="f-pb-razon" placeholder="Razón del incumplimiento...">
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-label">📷 Foto exhibición barras</label>
-        <div class="foto-area" onclick="triggerFoto('foto-b')">
-          <input type="file" id="foto-b" accept="image/*" capture="environment" onchange="previewFoto('foto-b','prev-b')">
-          <div class="foto-icon">📸</div>
-          <div class="foto-label">Sacar foto o elegir de galería</div>
-          <div class="foto-sub">Toca para abrir cámara o galería</div>
-        </div>
-        <img id="prev-b" class="foto-preview">
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-back" onclick="irPaso(1)">←</button>
-      <button class="btn-primary" style="flex:1" onclick="irPaso(3)">Siguiente →</button>
-    </div>
-  </div>
-
-  <!-- PASO 3: Milanesas -->
-  <div id="paso-3" style="display:none">
-    <div class="step-header">
-      <div class="step-badge">Paso 3 de 5</div>
       <div class="step-title">Milanesas saludables</div>
       <div class="step-sub">Categoría congelados</div>
     </div>
@@ -327,13 +273,95 @@ textarea{resize:none;line-height:1.5}
       </div>
       <div class="field">
         <label class="field-label">📷 Foto exhibición milanesas</label>
-        <div class="foto-area" onclick="triggerFoto('foto-m')">
-          <input type="file" id="foto-m" accept="image/*" capture="environment" onchange="previewFoto('foto-m','prev-m')">
-          <div class="foto-icon">📸</div>
-          <div class="foto-label">Sacar foto o elegir de galería</div>
-          <div class="foto-sub">Toca para abrir cámara o galería</div>
+        <div class="foto-wrap">
+          <div class="foto-btns">
+            <div class="foto-btn" id="btn-cam-m">
+              <input type="file" id="foto-m-cam" accept="image/*" capture="environment" onchange="handleFoto('m','cam')">
+              📷 Cámara
+            </div>
+            <div class="foto-btn" id="btn-gal-m">
+              <input type="file" id="foto-m-gal" accept="image/*" onchange="handleFoto('m','gal')">
+              🖼️ Galería
+            </div>
+          </div>
+          <img id="prev-m" class="foto-preview">
         </div>
-        <img id="prev-m" class="foto-preview">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="irPaso(1)">←</button>
+      <button class="btn-primary" style="flex:1" onclick="irPaso(3)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PASO 3: BARRAS -->
+  <div id="paso-3" style="display:none">
+    <div class="step-header">
+      <div class="step-badge">Paso 3 de 5</div>
+      <div class="step-title">Barras proteicas</div>
+      <div class="step-sub">Ingresá los frentes — el share se calcula solo</div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">Total frentes categoría</label>
+        <input type="number" id="f-b-total" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="field">
+        <label class="field-label">Frentes NotCo</label>
+        <input type="number" id="f-b-notco" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="divider"></div>
+      <div class="card-label">Competencia</div>
+      <div class="field">
+        <label class="field-label">Integra</label>
+        <input type="number" id="f-b-integra" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="field">
+        <label class="field-label">Otros</label>
+        <input type="number" id="f-b-otros" placeholder="0" min="0" oninput="calcShare('b')">
+      </div>
+      <div class="share-meter">
+        <div class="share-meter-title">Share de góndola — Barras</div>
+        <div id="sm-b-rows"><div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div></div>
+        <div class="share-total-row">
+          <span class="share-total-label">Total relevado</span>
+          <span class="share-total-val" id="sm-b-total">0 frentes</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label class="field-label">¿Hay quiebre?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-qb-si" onclick="setRadio('qb','si')">Sí</div>
+          <div class="radio-opt" id="ro-qb-no" onclick="setRadio('qb','no')">No</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">¿Respeta planograma?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-pb-si" onclick="setRadio('pb','si')">Sí</div>
+          <div class="radio-opt" id="ro-pb-no" onclick="setRadio('pb','no')">No</div>
+        </div>
+        <div class="razon-wrap" id="rw-pb">
+          <input type="text" id="f-pb-razon" placeholder="Razón del incumplimiento...">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">📷 Foto exhibición barras</label>
+        <div class="foto-wrap">
+          <div class="foto-btns">
+            <div class="foto-btn" id="btn-cam-b">
+              <input type="file" id="foto-b-cam" accept="image/*" capture="environment" onchange="handleFoto('b','cam')">
+              📷 Cámara
+            </div>
+            <div class="foto-btn" id="btn-gal-b">
+              <input type="file" id="foto-b-gal" accept="image/*" onchange="handleFoto('b','gal')">
+              🖼️ Galería
+            </div>
+          </div>
+          <img id="prev-b" class="foto-preview">
+        </div>
       </div>
     </div>
     <div class="btn-row">
@@ -342,7 +370,7 @@ textarea{resize:none;line-height:1.5}
     </div>
   </div>
 
-  <!-- PASO 4: Leches -->
+  <!-- PASO 4: LECHES -->
   <div id="paso-4" style="display:none">
     <div class="step-header">
       <div class="step-badge">Paso 4 de 5</div>
@@ -351,7 +379,7 @@ textarea{resize:none;line-height:1.5}
     </div>
     <div class="card">
       <div class="field">
-        <label class="field-label">Total frentes categoría leches vegetales</label>
+        <label class="field-label">Total frentes categoría</label>
         <input type="number" id="f-l-total" placeholder="0" min="0" oninput="calcShare('l')">
       </div>
       <div class="field">
@@ -395,13 +423,19 @@ textarea{resize:none;line-height:1.5}
       </div>
       <div class="field">
         <label class="field-label">📷 Foto exhibición leches</label>
-        <div class="foto-area" onclick="triggerFoto('foto-l')">
-          <input type="file" id="foto-l" accept="image/*" capture="environment" onchange="previewFoto('foto-l','prev-l')">
-          <div class="foto-icon">📸</div>
-          <div class="foto-label">Sacar foto o elegir de galería</div>
-          <div class="foto-sub">Toca para abrir cámara o galería</div>
+        <div class="foto-wrap">
+          <div class="foto-btns">
+            <div class="foto-btn" id="btn-cam-l">
+              <input type="file" id="foto-l-cam" accept="image/*" capture="environment" onchange="handleFoto('l','cam')">
+              📷 Cámara
+            </div>
+            <div class="foto-btn" id="btn-gal-l">
+              <input type="file" id="foto-l-gal" accept="image/*" onchange="handleFoto('l','gal')">
+              🖼️ Galería
+            </div>
+          </div>
+          <img id="prev-l" class="foto-preview">
         </div>
-        <img id="prev-l" class="foto-preview">
       </div>
     </div>
     <div class="btn-row">
@@ -410,7 +444,7 @@ textarea{resize:none;line-height:1.5}
     </div>
   </div>
 
-  <!-- PASO 5: Oportunidades -->
+  <!-- PASO 5: OPORTUNIDADES -->
   <div id="paso-5" style="display:none">
     <div class="step-header">
       <div class="step-badge">Paso 5 de 5</div>
@@ -426,12 +460,18 @@ textarea{resize:none;line-height:1.5}
         </div>
       </div>
       <div class="field">
-        <label class="field-label">Punteras</label>
-        <textarea id="f-punteras" rows="2" placeholder="Punteras activas o disponibles..."></textarea>
+        <label class="field-label">¿Hay punteras?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-punt-si" onclick="setRadio('punt','si')">Sí</div>
+          <div class="radio-opt" id="ro-punt-no" onclick="setRadio('punt','no')">No</div>
+        </div>
       </div>
       <div class="field">
-        <label class="field-label">Exhibiciones adicionales / cruzadas</label>
-        <textarea id="f-exhib" rows="2" placeholder="Detallar exhibiciones adicionales..."></textarea>
+        <label class="field-label">¿Hay exhibiciones adicionales / cruzadas?</label>
+        <div class="radio-group">
+          <div class="radio-opt" id="ro-exhib-si" onclick="setRadio('exhib','si')">Sí</div>
+          <div class="radio-opt" id="ro-exhib-no" onclick="setRadio('exhib','no')">No</div>
+        </div>
       </div>
       <div class="field">
         <label class="field-label">Notas finales / oportunidades detectadas</label>
@@ -453,7 +493,10 @@ textarea{resize:none;line-height:1.5}
       <div class="success-title">¡Visita guardada!</div>
       <div class="success-sub" id="ok-sub">Los datos se registraron correctamente.</div>
       <button class="btn-primary" style="margin-top:28px" onclick="nuevaVisita()">Nueva visita</button>
-      <button class="btn-secondary" style="margin-top:10px" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn-secondary" style="margin-top:10px" onclick="exportCSV()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar CSV
+      </button>
     </div>
   </div>
 
@@ -463,7 +506,7 @@ textarea{resize:none;line-height:1.5}
 <div class="view" id="view-historial">
   <div class="step-header">
     <div class="step-title">Historial</div>
-    <div class="step-sub">Visitas de esta sesión</div>
+    <div class="step-sub" id="hist-sub">Cargando...</div>
   </div>
   <div id="historial-content">
     <div class="empty"><div class="empty-icon">📋</div><p>Aún no hay visitas registradas</p></div>
@@ -474,23 +517,14 @@ textarea{resize:none;line-height:1.5}
   </button>
 </div>
 
-<!-- ═══ STATS ═══ -->
-<div class="view" id="view-stats">
+<!-- ═══ DASHBOARD ═══ -->
+<div class="view" id="view-dashboard">
   <div class="step-header">
-    <div class="step-title">Estadísticas</div>
-    <div class="step-sub">Resumen de la sesión</div>
+    <div class="step-title">Dashboard</div>
+    <div class="step-sub">Análisis de visitas del equipo</div>
   </div>
-  <div class="stats-grid">
-    <div class="stat-box"><div class="stat-val" id="st-visitas">0</div><div class="stat-lbl">Visitas</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-quiebres">0</div><div class="stat-lbl">Quiebres</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-sb">—</div><div class="stat-lbl">Share barras</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-sm">—</div><div class="stat-lbl">Share milanesas</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-sl">—</div><div class="stat-lbl">Share leches</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-op">—</div><div class="stat-lbl">Oport. pedido</div></div>
-  </div>
-  <div class="card" id="stats-cadenas">
-    <div class="card-label">Visitas por cadena</div>
-    <p style="font-size:13px;color:var(--text3)">Sin datos aún.</p>
+  <div id="dash-content">
+    <div class="empty"><div class="empty-icon">📊</div><p>Configurá el Google Sheet para ver el dashboard</p></div>
   </div>
 </div>
 
@@ -499,6 +533,20 @@ textarea{resize:none;line-height:1.5}
   <div class="step-header">
     <div class="step-title">Configuración</div>
     <div class="step-sub">Ajustes de la app</div>
+  </div>
+  <div class="sheet-setup" id="sheet-setup-banner">
+    <p>📊 <strong>Conectá Google Sheets</strong> para que los datos queden guardados en la nube y todo el equipo pueda verlos.</p>
+    <p style="font-size:12px;margin-bottom:0">Creá una planilla en Google Sheets, copiá su ID de la URL y pegalo acá.</p>
+  </div>
+  <div class="card">
+    <div class="card-label">Google Sheets</div>
+    <div class="field">
+      <label class="field-label">ID de la planilla</label>
+      <input type="text" id="cfg-sheet-id" placeholder="Pegar ID de la planilla...">
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">URL: docs.google.com/spreadsheets/d/<strong style="color:var(--accent)">ID</strong>/edit</div>
+    </div>
+    <div style="padding:10px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text2);margin-bottom:12px" id="cfg-sheet-status">Sin planilla configurada</div>
+    <button class="btn-primary" style="font-size:13px;padding:11px" onclick="guardarConfigSheet()">Guardar y conectar</button>
   </div>
   <div class="card">
     <div class="card-label">Mi perfil</div>
@@ -511,128 +559,156 @@ textarea{resize:none;line-height:1.5}
     </div>
     <button class="btn-primary" style="margin-top:10px;font-size:13px;padding:11px" onclick="guardarPerfil()">Guardar preferencia</button>
   </div>
-  <div class="card">
-    <div class="card-label">Cómo usar</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.8">
-      1. Completá el formulario en 5 pasos<br>
-      2. Al guardar, descargá el CSV<br>
-      3. Abrí el CSV en Excel — cada campo en su columna<br>
-      4. Agregá esta página al home screen del celu para acceso rápido
-    </div>
-  </div>
   <div style="text-align:center;margin-top:24px">
-    <p style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">Notco Field App v2.0 · 2025</p>
+    <p style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">Notco Field App v3.0 · 2025</p>
   </div>
 </div>
 
 </div><!-- /content -->
 </div><!-- /app -->
-
 <div class="toast" id="toast"></div>
 
 <script>
-let visitas=[], radios={}, pasoActual=1;
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let visitas = [];
+let radios = {};
+let pasoActual = 1;
+let sheetId = localStorage.getItem('notco_sheet_id') || null;
+let sheetUrl = sheetId ? 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit' : null;
 
-// ══ INIT ══
-function init(){
-  const now=new Date();
-  document.getElementById('header-date').textContent=now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
-  // Fecha de hoy por defecto
-  const hoy=now.toISOString().split('T')[0];
-  document.getElementById('f-fecha').value=hoy;
-  // Perfil guardado
-  const sf=localStorage.getItem('notco_field');
-  if(sf){document.getElementById('f-field').value=sf;document.getElementById('cfg-field').value=sf;}
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init() {
+  const now = new Date();
+  document.getElementById('header-date').textContent = now.toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'});
+  document.getElementById('f-fecha').value = now.toISOString().split('T')[0];
+  const sf = localStorage.getItem('notco_field');
+  if (sf) { document.getElementById('f-field').value = sf; document.getElementById('cfg-field').value = sf; }
+  if (sheetId) {
+    document.getElementById('cfg-sheet-id').value = sheetId;
+    updateSyncStatus(true);
+    document.getElementById('cfg-sheet-status').innerHTML = '<span style="color:var(--green)">✓ Conectado</span> — ' + sheetId.slice(0,30) + '...';
+    document.getElementById('sheet-setup-banner').style.display = 'none';
+  }
 }
 
-// ══ NAV ══
-function switchView(v){
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.getElementById('nav-'+v).classList.add('active');
-  if(v==='historial')renderHistorial();
-  if(v==='stats')renderStats();
+// ══════════════════════════════════════════
+// SYNC STATUS
+// ══════════════════════════════════════════
+function updateSyncStatus(connected) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-txt');
+  if (connected) { dot.style.background = 'var(--green)'; txt.style.color = 'var(--green)'; txt.textContent = 'Sheets ✓'; }
+  else { dot.style.background = 'var(--text3)'; txt.style.color = 'var(--text3)'; txt.textContent = 'sin Sheet'; }
 }
 
-// ══ STEPS ══
-function irPaso(n){
-  if(n>pasoActual&&!validarPaso(pasoActual))return;
-  document.getElementById('paso-'+pasoActual).style.display='none';
-  pasoActual=n;
-  document.getElementById('paso-'+n).style.display='block';
-  document.getElementById('progress-fill').style.width=(((n-1)/5)*100)+'%';
-  window.scrollTo({top:0,behavior:'smooth'});
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('nav-' + v).classList.add('active');
+  if (v === 'historial') renderHistorial();
+  if (v === 'dashboard') renderDashboard();
 }
 
-function validarPaso(p){
-  if(p===1){
-    if(!document.getElementById('f-fecha').value){showToast('Seleccioná la fecha');return false;}
-    if(!document.getElementById('f-cadena').value){showToast('Seleccioná una cadena');return false;}
-    if(!document.getElementById('f-sucursal').value.trim()){showToast('Ingresá el número de sucursal');return false;}
+// ══════════════════════════════════════════
+// STEPS
+// ══════════════════════════════════════════
+function irPaso(n) {
+  if (n > pasoActual && !validarPaso(pasoActual)) return;
+  document.getElementById('paso-' + pasoActual).style.display = 'none';
+  pasoActual = n;
+  document.getElementById('paso-' + n).style.display = 'block';
+  document.getElementById('progress-fill').style.width = (((n-1)/5)*100) + '%';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function validarPaso(p) {
+  if (p === 1) {
+    if (!document.getElementById('f-fecha').value) { showToast('Seleccioná la fecha'); return false; }
+    if (!document.getElementById('f-cadena').value) { showToast('Seleccioná una cadena'); return false; }
+    if (!document.getElementById('f-sucursal').value.trim()) { showToast('Ingresá el número de sucursal'); return false; }
   }
   return true;
 }
 
-// ══ RADIO ══
-function setRadio(group,val){
-  radios[group]=val;
-  const si=document.getElementById('ro-'+group+'-si');
-  const no=document.getElementById('ro-'+group+'-no');
-  if(si)si.className='radio-opt'+(val==='si'?' sel-si':'');
-  if(no)no.className='radio-opt'+(val==='no'?' sel-no':'');
-  const razonMap={pb:'rw-pb',pm:'rw-pm',pl:'rw-pl'};
-  if(razonMap[group])document.getElementById(razonMap[group]).style.display=val==='no'?'block':'none';
+// ══════════════════════════════════════════
+// RADIO
+// ══════════════════════════════════════════
+function setRadio(group, val) {
+  radios[group] = val;
+  const si = document.getElementById('ro-' + group + '-si');
+  const no = document.getElementById('ro-' + group + '-no');
+  if (si) si.className = 'radio-opt' + (val === 'si' ? ' sel-si' : '');
+  if (no) no.className = 'radio-opt' + (val === 'no' ? ' sel-no' : '');
+  const razonMap = {pb:'rw-pb', pm:'rw-pm', pl:'rw-pl'};
+  if (razonMap[group]) document.getElementById(razonMap[group]).style.display = val === 'no' ? 'block' : 'none';
 }
 
-// ══ FOTO ══
-function triggerFoto(id){
-  // El click ya lo maneja el input file, no hacemos nada extra
-}
-function previewFoto(inputId,previewId){
-  const file=document.getElementById(inputId).files[0];
-  const prev=document.getElementById(previewId);
-  if(file){
-    const url=URL.createObjectURL(file);
-    prev.src=url;
-    prev.style.display='block';
-    // Actualizar el área de foto
-    const area=document.getElementById(inputId).parentElement;
-    area.querySelector('.foto-icon').textContent='✅';
-    area.querySelector('.foto-label').textContent='Foto cargada';
-    area.querySelector('.foto-sub').textContent=file.name;
-  }
+// ══════════════════════════════════════════
+// FOTOS (cámara + galería separados)
+// ══════════════════════════════════════════
+function handleFoto(cat, source) {
+  const inputId = 'foto-' + cat + '-' + (source === 'cam' ? 'cam' : 'gal');
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  const prev = document.getElementById('prev-' + cat);
+  prev.src = URL.createObjectURL(file);
+  prev.style.display = 'block';
+  document.getElementById('btn-cam-' + cat).classList.toggle('taken', source === 'cam');
+  document.getElementById('btn-gal-' + cat).classList.toggle('taken', source === 'gal');
 }
 
-// ══ SHARE ══
-const SHARE_CFG={
-  b:{
-    brands:[{id:'f-b-notco',label:'NotCo',isNotco:true},{id:'f-b-integra',label:'Integra',isNotco:false},{id:'f-b-otros',label:'Otros',isNotco:false}],
-    total:'f-b-total',rows:'sm-b-rows',totalEl:'sm-b-total',unit:'frentes'
+// ══════════════════════════════════════════
+// SHARE — excluye "Otros" del gráfico
+// ══════════════════════════════════════════
+const SHARE_CFG = {
+  m: {
+    brands: [
+      {id:'f-m-notco', label:'NotCo', isNotco:true, showBar:true},
+      {id:'f-m-veg',   label:'Vegetalex', isNotco:false, showBar:true},
+      {id:'f-m-gds',   label:'Granja del Sol', isNotco:false, showBar:true},
+      {id:'f-m-otros', label:'Otros', isNotco:false, showBar:false}
+    ],
+    total:'f-m-total', rows:'sm-m-rows', totalEl:'sm-m-total', unit:'puertas'
   },
-  m:{
-    brands:[{id:'f-m-notco',label:'NotCo',isNotco:true},{id:'f-m-veg',label:'Vegetalex',isNotco:false},{id:'f-m-gds',label:'Granja del Sol',isNotco:false},{id:'f-m-otros',label:'Otros',isNotco:false}],
-    total:'f-m-total',rows:'sm-m-rows',totalEl:'sm-m-total',unit:'puertas'
+  b: {
+    brands: [
+      {id:'f-b-notco',   label:'NotCo', isNotco:true, showBar:true},
+      {id:'f-b-integra', label:'Integra', isNotco:false, showBar:true},
+      {id:'f-b-otros',   label:'Otros', isNotco:false, showBar:false}
+    ],
+    total:'f-b-total', rows:'sm-b-rows', totalEl:'sm-b-total', unit:'frentes'
   },
-  l:{
-    brands:[{id:'f-l-notco',label:'NotCo',isNotco:true},{id:'f-l-comp',label:'Competencia',isNotco:false}],
-    total:'f-l-total',rows:'sm-l-rows',totalEl:'sm-l-total',unit:'frentes'
+  l: {
+    brands: [
+      {id:'f-l-notco', label:'NotCo', isNotco:true, showBar:true},
+      {id:'f-l-comp',  label:'Competencia', isNotco:false, showBar:true}
+    ],
+    total:'f-l-total', rows:'sm-l-rows', totalEl:'sm-l-total', unit:'frentes'
   }
 };
 
-function calcShare(cat){
-  const cfg=SHARE_CFG[cat];
-  const total=parseFloat(document.getElementById(cfg.total).value)||0;
-  const vals=cfg.brands.map(b=>({...b,val:parseFloat(document.getElementById(b.id).value)||0}));
-  const sumIngresado=vals.reduce((a,b)=>a+b.val,0);
-  const base=total>0?total:sumIngresado;
-  const rowsEl=document.getElementById(cfg.rows);
-  document.getElementById(cfg.totalEl).textContent=base+' '+cfg.unit+(total>0?' (cat. total)':'');
-  if(base===0){rowsEl.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div>';return;}
-  rowsEl.innerHTML=vals.filter(b=>b.val>0||b.isNotco).map(b=>{
-    const pct=Math.round((b.val/base)*100);
-    const color=b.isNotco?(pct>=40?'var(--green)':pct>=20?'var(--amber)':'var(--red)'):'rgba(240,240,248,0.25)';
-    return`<div class="share-row">
+function calcShare(cat) {
+  const cfg = SHARE_CFG[cat];
+  const total = parseFloat(document.getElementById(cfg.total).value) || 0;
+  const vals = cfg.brands.map(b => ({...b, val: parseFloat(document.getElementById(b.id).value) || 0}));
+  const sumIngresado = vals.reduce((a, b) => a + b.val, 0);
+  const base = total > 0 ? total : sumIngresado;
+  document.getElementById(cfg.totalEl).textContent = base + ' ' + cfg.unit + (total > 0 ? ' (cat. total)' : '');
+  const rowsEl = document.getElementById(cfg.rows);
+  if (base === 0) { rowsEl.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px 0">Ingresá los frentes para ver el share</div>'; return; }
+  // Solo mostrar barra para los que tienen showBar:true
+  rowsEl.innerHTML = vals.filter(b => b.showBar && (b.val > 0 || b.isNotco)).map(b => {
+    const pct = Math.round((b.val / base) * 100);
+    const color = b.isNotco ? (pct >= 40 ? 'var(--green)' : pct >= 20 ? 'var(--amber)' : 'var(--red)') : 'rgba(240,240,248,0.25)';
+    return `<div class="share-row">
       <span class="share-brand">${b.label}</span>
       <div class="share-track"><div class="share-fill-bar" style="width:${Math.min(pct,100)}%;background:${color}"></div></div>
       <span class="share-pct" style="color:${color}">${pct}%</span>
@@ -640,153 +716,216 @@ function calcShare(cat){
   }).join('');
 }
 
-function getShareNotco(cat){
-  const cfg=SHARE_CFG[cat];
-  const total=parseFloat(document.getElementById(cfg.total).value)||0;
-  const notcoVal=parseFloat(document.getElementById(cfg.brands[0].id).value)||0;
-  const compSum=cfg.brands.slice(1).reduce((a,b)=>a+(parseFloat(document.getElementById(b.id).value)||0),0);
-  const base=total>0?total:(notcoVal+compSum);
-  return base>0?Math.round((notcoVal/base)*100):null;
+function getShareNotco(cat) {
+  const cfg = SHARE_CFG[cat];
+  const total = parseFloat(document.getElementById(cfg.total).value) || 0;
+  const notcoVal = parseFloat(document.getElementById(cfg.brands[0].id).value) || 0;
+  const compSum = cfg.brands.slice(1).reduce((a,b) => a + (parseFloat(document.getElementById(b.id).value)||0), 0);
+  const base = total > 0 ? total : (notcoVal + compSum);
+  return base > 0 ? Math.round((notcoVal/base)*100) : null;
 }
 
-// ══ GUARDAR ══
-async function guardarVisita(){
-  const btn=document.getElementById('btn-guardar');
-  const txt=document.getElementById('btn-txt');
-  btn.disabled=true;txt.innerHTML='<div class="spinner"></div>';
+// ══════════════════════════════════════════
+// GUARDAR — Google Sheets vía Anthropic API
+// ══════════════════════════════════════════
+async function guardarVisita() {
+  const btn = document.getElementById('btn-guardar');
+  const txt = document.getElementById('btn-txt');
+  btn.disabled = true; txt.innerHTML = '<div class="spinner"></div>';
 
-  const v={
-    id:Date.now(),
-    fecha:document.getElementById('f-fecha').value,
-    field:document.getElementById('f-field').value,
-    cadena:document.getElementById('f-cadena').value||'—',
-    sucursal:document.getElementById('f-sucursal').value,
-    contacto:document.getElementById('f-contacto').value,
-    repo:radios['repo']||'—',
-    obsGen:document.getElementById('f-obs-gen').value,
-    // Barras
-    bTotal:document.getElementById('f-b-total').value||0,
-    bNotco:document.getElementById('f-b-notco').value||0,
-    bIntegra:document.getElementById('f-b-integra').value||0,
-    bOtros:document.getElementById('f-b-otros').value||0,
-    shareBarras:getShareNotco('b'),
-    quiebreBarras:radios['qb']||'—',
-    planoBarras:radios['pb']||'—',
-    planoBarrasRazon:document.getElementById('f-pb-razon').value,
-    fotoBarras:document.getElementById('foto-b').files[0]?'Sí':'No',
-    // Milanesas
-    mTotal:document.getElementById('f-m-total').value||0,
-    mNotco:document.getElementById('f-m-notco').value||0,
-    mVeg:document.getElementById('f-m-veg').value||0,
-    mGds:document.getElementById('f-m-gds').value||0,
-    mOtros:document.getElementById('f-m-otros').value||0,
-    shareMil:getShareNotco('m'),
-    quiebreMil:radios['qm']||'—',
-    planoMil:radios['pm']||'—',
-    planoMilRazon:document.getElementById('f-pm-razon').value,
-    obsMil:document.getElementById('f-obs-mil').value,
-    fotoMil:document.getElementById('foto-m').files[0]?'Sí':'No',
-    // Leches
-    lTotal:document.getElementById('f-l-total').value||0,
-    lNotco:document.getElementById('f-l-notco').value||0,
-    lComp:document.getElementById('f-l-comp').value||0,
-    shareLec:getShareNotco('l'),
-    quiebreLec:radios['ql']||'—',
-    planoLec:radios['pl']||'—',
-    planoLecRazon:document.getElementById('f-pl-razon').value,
-    obsLec:document.getElementById('f-obs-lec').value,
-    fotoLec:document.getElementById('foto-l').files[0]?'Sí':'No',
-    // Oportunidades
-    oportunidad:radios['op']||'—',
-    punteras:document.getElementById('f-punteras').value,
-    exhib:document.getElementById('f-exhib').value,
-    notas:document.getElementById('f-notas').value,
+  const v = {
+    id: Date.now(),
+    fecha: document.getElementById('f-fecha').value,
+    field: document.getElementById('f-field').value,
+    cadena: document.getElementById('f-cadena').value || '—',
+    sucursal: document.getElementById('f-sucursal').value,
+    contacto: document.getElementById('f-contacto').value,
+    repo: radios['repo'] || '—',
+    obsGen: document.getElementById('f-obs-gen').value,
+    mTotal: document.getElementById('f-m-total').value || 0,
+    mNotco: document.getElementById('f-m-notco').value || 0,
+    mVeg: document.getElementById('f-m-veg').value || 0,
+    mGds: document.getElementById('f-m-gds').value || 0,
+    mOtros: document.getElementById('f-m-otros').value || 0,
+    shareMil: getShareNotco('m'),
+    quiebreMil: radios['qm'] || '—',
+    planoMil: radios['pm'] || '—',
+    planoMilRazon: document.getElementById('f-pm-razon').value,
+    obsMil: document.getElementById('f-obs-mil').value,
+    fotoMil: (document.getElementById('foto-m-cam').files[0] || document.getElementById('foto-m-gal').files[0]) ? 'Sí' : 'No',
+    bTotal: document.getElementById('f-b-total').value || 0,
+    bNotco: document.getElementById('f-b-notco').value || 0,
+    bIntegra: document.getElementById('f-b-integra').value || 0,
+    bOtros: document.getElementById('f-b-otros').value || 0,
+    shareBarras: getShareNotco('b'),
+    quiebreBarras: radios['qb'] || '—',
+    planoBarras: radios['pb'] || '—',
+    planoBarrasRazon: document.getElementById('f-pb-razon').value,
+    fotoBarras: (document.getElementById('foto-b-cam').files[0] || document.getElementById('foto-b-gal').files[0]) ? 'Sí' : 'No',
+    lTotal: document.getElementById('f-l-total').value || 0,
+    lNotco: document.getElementById('f-l-notco').value || 0,
+    lComp: document.getElementById('f-l-comp').value || 0,
+    shareLec: getShareNotco('l'),
+    quiebreLec: radios['ql'] || '—',
+    planoLec: radios['pl'] || '—',
+    planoLecRazon: document.getElementById('f-pl-razon').value,
+    obsLec: document.getElementById('f-obs-lec').value,
+    fotoLec: (document.getElementById('foto-l-cam').files[0] || document.getElementById('foto-l-gal').files[0]) ? 'Sí' : 'No',
+    oportunidad: radios['op'] || '—',
+    punteras: radios['punt'] || '—',
+    exhib: radios['exhib'] || '—',
+    notas: document.getElementById('f-notas').value,
   };
 
   visitas.push(v);
-  btn.disabled=false;txt.textContent='Guardar visita';
-  document.getElementById('paso-5').style.display='none';
-  document.getElementById('paso-ok').style.display='block';
-  document.getElementById('ok-sub').textContent='✓ Visita registrada. Podés exportar el CSV ahora o después desde Historial.';
-}
 
-// ══ RESET ══
-function nuevaVisita(){
-  radios={};pasoActual=1;
-  ['f-sucursal','f-contacto','f-obs-gen',
-   'f-b-total','f-b-notco','f-b-integra','f-b-otros','f-pb-razon',
-   'f-m-total','f-m-notco','f-m-veg','f-m-gds','f-m-otros','f-pm-razon','f-obs-mil',
-   'f-l-total','f-l-notco','f-l-comp','f-pl-razon','f-obs-lec',
-   'f-punteras','f-exhib','f-notas'
-  ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('f-cadena').value='';
-  document.querySelectorAll('.radio-opt').forEach(el=>el.className='radio-opt');
-  document.querySelectorAll('.razon-wrap').forEach(el=>el.style.display='none');
-  // Reset fotos
-  ['b','m','l'].forEach(cat=>{
-    const inp=document.getElementById('foto-'+cat);
-    if(inp)inp.value='';
-    const prev=document.getElementById('prev-'+cat);
-    if(prev){prev.style.display='none';prev.src='';}
-    const area=inp?inp.parentElement:null;
-    if(area){
-      area.querySelector('.foto-icon').textContent='📸';
-      area.querySelector('.foto-label').textContent='Sacar foto o elegir de galería';
-      area.querySelector('.foto-sub').textContent='Toca para abrir cámara o galería';
+  let msg = '✓ Guardado localmente.';
+  if (sheetId) {
+    try {
+      await appendToSheet(v);
+      msg = '✓ Guardado en Google Sheets. Todo el equipo puede verlo.';
+    } catch(e) {
+      msg = '⚠️ Guardado local. No se pudo sincronizar con Sheets.';
     }
-    calcShare(cat);
-  });
-  document.getElementById('paso-ok').style.display='none';
-  document.getElementById('paso-1').style.display='block';
-  const hoy=new Date().toISOString().split('T')[0];
-  document.getElementById('f-fecha').value=hoy;
-  const sf=localStorage.getItem('notco_field');
-  if(sf)document.getElementById('f-field').value=sf;
-  document.getElementById('progress-fill').style.width='0%';
-  window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  btn.disabled = false; txt.textContent = 'Guardar visita';
+  document.getElementById('paso-5').style.display = 'none';
+  document.getElementById('paso-ok').style.display = 'block';
+  document.getElementById('ok-sub').textContent = msg;
 }
 
-// ══ CSV (columnas separadas correctamente) ══
-const CSV_HEADERS=[
+// ══════════════════════════════════════════
+// GOOGLE SHEETS via Anthropic API
+// ══════════════════════════════════════════
+const CSV_HEADERS = [
   'Fecha','Field','Cadena','Sucursal','Contacto','Repo','Obs_General',
-  'Total_Cat_Barras','NotCo_Barras','Integra_Barras','Otros_Barras','Share_NotCo_Barras_%','Quiebre_Barras','Plano_Barras','Razon_Plano_Barras','Foto_Barras',
   'Total_Cat_Milanesas','NotCo_Milanesas','Vegetalex_Milanesas','GranjaDelSol_Milanesas','Otros_Milanesas','Share_NotCo_Milanesas_%','Quiebre_Milanesas','Plano_Milanesas','Razon_Plano_Milanesas','Obs_Milanesas','Foto_Milanesas',
+  'Total_Cat_Barras','NotCo_Barras','Integra_Barras','Otros_Barras','Share_NotCo_Barras_%','Quiebre_Barras','Plano_Barras','Razon_Plano_Barras','Foto_Barras',
   'Total_Cat_Leches','NotCo_Leches','Competencia_Leches','Share_NotCo_Leches_%','Quiebre_Leches','Plano_Leches','Razon_Plano_Leches','Obs_Leches','Foto_Leches',
   'Oportunidad_Pedido','Punteras','Exhibiciones_Adicionales','Notas_Finales'
 ];
 
-function escCSV(val){return'"'+String(val==null?'':val).replace(/"/g,'""')+'"';}
-
-function exportCSV(){
-  if(!visitas.length){showToast('No hay visitas para exportar');return;}
-  const rows=visitas.map(v=>[
-    v.fecha,v.field,v.cadena,v.sucursal,v.contacto,v.repo,v.obsGen,
-    v.bTotal,v.bNotco,v.bIntegra,v.bOtros,v.shareBarras??'',v.quiebreBarras,v.planoBarras,v.planoBarrasRazon,v.fotoBarras,
-    v.mTotal,v.mNotco,v.mVeg,v.mGds,v.mOtros,v.shareMil??'',v.quiebreMil,v.planoMil,v.planoMilRazon,v.obsMil,v.fotoMil,
-    v.lTotal,v.lNotco,v.lComp,v.shareLec??'',v.quiebreLec,v.planoLec,v.planoLecRazon,v.obsLec,v.fotoLec,
-    v.oportunidad,v.punteras,v.exhib,v.notas
-  ].map(escCSV).join(','));
-  const csv=[CSV_HEADERS.map(escCSV).join(','),...rows].join('\r\n');
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='notco_visitas_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
-  showToast('✓ CSV descargado');
+function vToRow(v) {
+  return [
+    v.fecha, v.field, v.cadena, v.sucursal, v.contacto, v.repo, v.obsGen,
+    v.mTotal, v.mNotco, v.mVeg, v.mGds, v.mOtros, v.shareMil??'', v.quiebreMil, v.planoMil, v.planoMilRazon, v.obsMil, v.fotoMil,
+    v.bTotal, v.bNotco, v.bIntegra, v.bOtros, v.shareBarras??'', v.quiebreBarras, v.planoBarras, v.planoBarrasRazon, v.fotoBarras,
+    v.lTotal, v.lNotco, v.lComp, v.shareLec??'', v.quiebreLec, v.planoLec, v.planoLecRazon, v.obsLec, v.fotoLec,
+    v.oportunidad, v.punteras, v.exhib, v.notas
+  ];
 }
 
-// ══ HISTORIAL ══
-function shareTagHTML(pct,label){
-  if(pct===null)return'<span class="tag tag-gray">'+label+': —</span>';
-  const cls=pct>=40?'tag-green':pct>=20?'tag-amber':'tag-red';
-  return`<span class="tag ${cls}">${label}: ${pct}%</span>`;
+async function callClaude(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      mcp_servers: [{type:'url', url:'https://drivemcp.googleapis.com/mcp/v1', name:'gdrive'}],
+      messages: [{role:'user', content: prompt}]
+    })
+  });
+  const data = await res.json();
+  return data.content.filter(b => b.type === 'text').map(b => b.text).join('');
 }
-function renderHistorial(){
-  const el=document.getElementById('historial-content');
-  if(!visitas.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>Aún no hay visitas registradas</p></div>';return;}
-  el.innerHTML=[...visitas].reverse().map(v=>`
+
+async function appendToSheet(v) {
+  const row = vToRow(v).map(r => '"' + String(r==null?'':r).replace(/"/g,'""') + '"').join(', ');
+  await callClaude(`En el Google Spreadsheet con ID "${sheetId}", en la primera hoja, si la fila 1 está vacía primero escribí los encabezados: ${CSV_HEADERS.join(', ')}. Luego agregá una nueva fila al final con estos valores: ${row}. Solo hacé eso, sin responder nada.`);
+}
+
+async function loadFromSheet() {
+  if (!sheetId) return [];
+  try {
+    const txt = await callClaude(`Del Google Spreadsheet con ID "${sheetId}", leé todas las filas de la primera hoja y devolvé el contenido como JSON array de arrays. Solo el JSON, sin explicaciones ni markdown.`);
+    const clean = txt.replace(/```json|```/g,'').trim();
+    const rows = JSON.parse(clean);
+    if (rows.length < 2) return [];
+    const headers = rows[0];
+    return rows.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h,i) => obj[h] = row[i] || '');
+      return {
+        fecha: obj['Fecha'] || '',
+        field: obj['Field'] || '',
+        cadena: obj['Cadena'] || '',
+        sucursal: obj['Sucursal'] || '',
+        shareBarras: obj['Share_NotCo_Barras_%'] !== '' ? parseFloat(obj['Share_NotCo_Barras_%']) : null,
+        shareMil: obj['Share_NotCo_Milanesas_%'] !== '' ? parseFloat(obj['Share_NotCo_Milanesas_%']) : null,
+        shareLec: obj['Share_NotCo_Leches_%'] !== '' ? parseFloat(obj['Share_NotCo_Leches_%']) : null,
+        quiebreBarras: obj['Quiebre_Barras'] || '—',
+        quiebreMil: obj['Quiebre_Milanesas'] || '—',
+        quiebreLec: obj['Quiebre_Leches'] || '—',
+        oportunidad: obj['Oportunidad_Pedido'] || '—',
+        mNotco: parseFloat(obj['NotCo_Milanesas'])||0,
+        mVeg: parseFloat(obj['Vegetalex_Milanesas'])||0,
+        mGds: parseFloat(obj['GranjaDelSol_Milanesas'])||0,
+        bNotco: parseFloat(obj['NotCo_Barras'])||0,
+        bIntegra: parseFloat(obj['Integra_Barras'])||0,
+        lNotco: parseFloat(obj['NotCo_Leches'])||0,
+        lComp: parseFloat(obj['Competencia_Leches'])||0,
+      };
+    });
+  } catch(e) { return []; }
+}
+
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+function guardarConfigSheet() {
+  const id = document.getElementById('cfg-sheet-id').value.trim();
+  if (!id) { showToast('Ingresá el ID del Sheet'); return; }
+  sheetId = id;
+  localStorage.setItem('notco_sheet_id', id);
+  sheetUrl = 'https://docs.google.com/spreadsheets/d/' + id + '/edit';
+  updateSyncStatus(true);
+  document.getElementById('cfg-sheet-status').innerHTML = '<span style="color:var(--green)">✓ Conectado</span> — ' + id.slice(0,30) + '...';
+  document.getElementById('sheet-setup-banner').style.display = 'none';
+  showToast('✓ Sheet configurado');
+}
+
+function guardarPerfil() {
+  const val = document.getElementById('cfg-field').value;
+  localStorage.setItem('notco_field', val);
+  document.getElementById('f-field').value = val;
+  showToast('✓ Perfil guardado');
+}
+
+// ══════════════════════════════════════════
+// HISTORIAL
+// ══════════════════════════════════════════
+function shareTagHTML(pct, label) {
+  if (pct === null || pct === undefined || pct === '') return '<span class="tag tag-gray">' + label + ': —</span>';
+  const n = parseFloat(pct);
+  const cls = n >= 40 ? 'tag-green' : n >= 20 ? 'tag-amber' : 'tag-red';
+  return `<span class="tag ${cls}">${label}: ${n}%</span>`;
+}
+
+async function renderHistorial() {
+  const el = document.getElementById('historial-content');
+  const sub = document.getElementById('hist-sub');
+  sub.textContent = 'Cargando desde Sheets...';
+  el.innerHTML = '<div class="empty"><div class="empty-icon" style="font-size:24px;animation:spin 1s linear infinite">⟳</div><p>Cargando visitas...</p></div>';
+
+  let allVisitas = [...visitas];
+  if (sheetId) {
+    const remote = await loadFromSheet();
+    // Merge: priorizar remotas, evitar duplicados por fecha+cadena+sucursal
+    const localKeys = new Set(visitas.map(v => v.fecha+'|'+v.cadena+'|'+v.sucursal));
+    const newRemote = remote.filter(r => !localKeys.has(r.fecha+'|'+r.cadena+'|'+r.sucursal));
+    allVisitas = [...newRemote, ...visitas].sort((a,b) => b.fecha.localeCompare(a.fecha));
+    sub.textContent = allVisitas.length + ' visitas en total';
+  } else {
+    sub.textContent = visitas.length + ' visitas (sesión local)';
+  }
+
+  if (!allVisitas.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Aún no hay visitas registradas</p></div>'; return; }
+  el.innerHTML = allVisitas.map(v => `
     <div class="visit-card">
       <div class="visit-top"><div class="visit-title">${v.cadena} #${v.sucursal||'?'}</div><div class="visit-date">${v.fecha}</div></div>
-      <div style="font-size:12px;color:var(--text2);margin-top:3px">${v.field}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px">${v.field||''}</div>
       <div class="visit-tags">
         ${shareTagHTML(v.shareBarras,'Barras')}${shareTagHTML(v.shareMil,'Milanesas')}${shareTagHTML(v.shareLec,'Leches')}
         ${(v.quiebreBarras==='si'||v.quiebreMil==='si'||v.quiebreLec==='si')?'<span class="tag tag-red">quiebre</span>':''}
@@ -795,33 +934,161 @@ function renderHistorial(){
     </div>`).join('');
 }
 
-// ══ STATS ══
-function renderStats(){
-  const n=visitas.length;
-  document.getElementById('st-visitas').textContent=n;
-  document.getElementById('st-quiebres').textContent=visitas.filter(v=>v.quiebreBarras==='si'||v.quiebreMil==='si'||v.quiebreLec==='si').length;
-  const avg=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length)+'%':'—';
-  document.getElementById('st-sb').textContent=avg(visitas.filter(v=>v.shareBarras!==null).map(v=>v.shareBarras));
-  document.getElementById('st-sm').textContent=avg(visitas.filter(v=>v.shareMil!==null).map(v=>v.shareMil));
-  document.getElementById('st-sl').textContent=avg(visitas.filter(v=>v.shareLec!==null).map(v=>v.shareLec));
-  const ops=visitas.filter(v=>v.oportunidad==='si').length;
-  document.getElementById('st-op').textContent=n?ops+'/'+n:'—';
-  const cadenas={};visitas.forEach(v=>cadenas[v.cadena]=(cadenas[v.cadena]||0)+1);
-  const sc=document.getElementById('stats-cadenas');
-  if(!n){sc.innerHTML='<div class="card-label">Visitas por cadena</div><p style="font-size:13px;color:var(--text3)">Sin datos aún.</p>';return;}
-  sc.innerHTML='<div class="card-label">Visitas por cadena</div>'+Object.entries(cadenas).sort((a,b)=>b[1]-a[1]).map(([c,cnt])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)"><span>${c}</span><span style="font-weight:500">${cnt}</span></div>`).join('');
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+async function renderDashboard() {
+  const el = document.getElementById('dash-content');
+  if (!sheetId && visitas.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><p>Configurá el Google Sheet en Config para ver el dashboard completo</p></div>';
+    return;
+  }
+  el.innerHTML = '<div class="empty"><div class="empty-icon" style="font-size:24px;animation:spin 1s linear infinite">⟳</div><p>Cargando datos...</p></div>';
+
+  let data = [...visitas];
+  if (sheetId) {
+    const remote = await loadFromSheet();
+    const localKeys = new Set(visitas.map(v => v.fecha+'|'+v.cadena+'|'+v.sucursal));
+    const newRemote = remote.filter(r => !localKeys.has(r.fecha+'|'+r.cadena+'|'+r.sucursal));
+    data = [...newRemote, ...visitas];
+  }
+
+  if (!data.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><p>Aún no hay visitas para analizar</p></div>'; return; }
+
+  const n = data.length;
+  const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
+  const bShares = data.filter(v=>v.shareBarras!==null&&v.shareBarras!==undefined&&v.shareBarras!=='').map(v=>parseFloat(v.shareBarras));
+  const mShares = data.filter(v=>v.shareMil!==null&&v.shareMil!==undefined&&v.shareMil!=='').map(v=>parseFloat(v.shareMil));
+  const lShares = data.filter(v=>v.shareLec!==null&&v.shareLec!==undefined&&v.shareLec!=='').map(v=>parseFloat(v.shareLec));
+  const quiebres = data.filter(v=>v.quiebreBarras==='si'||v.quiebreMil==='si'||v.quiebreLec==='si').length;
+  const ops = data.filter(v=>v.oportunidad==='si').length;
+
+  // Share por cadena
+  const cadenasMap = {};
+  data.forEach(v => {
+    if (!cadenasMap[v.cadena]) cadenasMap[v.cadena] = {visits:0, bSum:0, bN:0, mSum:0, mN:0};
+    cadenasMap[v.cadena].visits++;
+    if (v.shareBarras!==null&&v.shareBarras!=='') { cadenasMap[v.cadena].bSum+=parseFloat(v.shareBarras); cadenasMap[v.cadena].bN++; }
+    if (v.shareMil!==null&&v.shareMil!=='') { cadenasMap[v.cadena].mSum+=parseFloat(v.shareMil); cadenasMap[v.cadena].mN++; }
+  });
+
+  const maxShare = Math.max(avg(bShares)||0, avg(mShares)||0, avg(lShares)||0, 1);
+
+  function kpiColor(val) {
+    if (val === null) return 'var(--text3)';
+    return val >= 40 ? 'var(--green)' : val >= 20 ? 'var(--amber)' : 'var(--red)';
+  }
+
+  el.innerHTML = `
+    <div class="dash-section">
+      <div class="dash-kpi-grid">
+        <div class="dash-kpi"><div class="dash-kpi-val">${n}</div><div class="dash-kpi-lbl">Visitas totales</div></div>
+        <div class="dash-kpi"><div class="dash-kpi-val" style="color:var(--red)">${quiebres}</div><div class="dash-kpi-lbl">Con quiebre</div></div>
+        <div class="dash-kpi"><div class="dash-kpi-val" style="color:var(--green)">${ops}</div><div class="dash-kpi-lbl">Oportunidades</div></div>
+      </div>
+    </div>
+
+    <div class="card dash-section">
+      <div class="dash-section-title">Share promedio NotCo</div>
+      ${[{label:'Barras', val:avg(bShares)},{label:'Milanesas', val:avg(mShares)},{label:'Leches', val:avg(lShares)}].map(item=>`
+        <div class="dash-bar-row">
+          <span class="dash-bar-label">${item.label}</span>
+          <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${item.val||0}%;background:${kpiColor(item.val)}"></div></div>
+          <span class="dash-bar-pct" style="color:${kpiColor(item.val)}">${item.val!==null?item.val+'%':'—'}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="card dash-section">
+      <div class="dash-section-title">Share por cadena — Barras</div>
+      ${Object.entries(cadenasMap).filter(([,d])=>d.bN>0).sort((a,b)=>(b[1].bSum/b[1].bN)-(a[1].bSum/a[1].bN)).map(([cadena,d])=>{
+        const pct = Math.round(d.bSum/d.bN);
+        return `<div class="dash-bar-row">
+          <span class="dash-bar-label">${cadena}</span>
+          <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${pct}%;background:${kpiColor(pct)}"></div></div>
+          <span class="dash-bar-pct" style="color:${kpiColor(pct)}">${pct}%</span>
+        </div>`;
+      }).join('') || '<p style="font-size:12px;color:var(--text3)">Sin datos suficientes</p>'}
+    </div>
+
+    <div class="card dash-section">
+      <div class="dash-section-title">Share por cadena — Milanesas</div>
+      ${Object.entries(cadenasMap).filter(([,d])=>d.mN>0).sort((a,b)=>(b[1].mSum/b[1].mN)-(a[1].mSum/a[1].mN)).map(([cadena,d])=>{
+        const pct = Math.round(d.mSum/d.mN);
+        return `<div class="dash-bar-row">
+          <span class="dash-bar-label">${cadena}</span>
+          <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${pct}%;background:${kpiColor(pct)}"></div></div>
+          <span class="dash-bar-pct" style="color:${kpiColor(pct)}">${pct}%</span>
+        </div>`;
+      }).join('') || '<p style="font-size:12px;color:var(--text3)">Sin datos suficientes</p>'}
+    </div>
+
+    <div class="card dash-section">
+      <div class="dash-section-title">Detalle por cadena</div>
+      <table class="dash-table">
+        <thead><tr><th>Cadena</th><th>Visitas</th><th>Barras</th><th>Milanesas</th><th>Quiebres</th></tr></thead>
+        <tbody>
+          ${Object.entries(cadenasMap).sort((a,b)=>b[1].visits-a[1].visits).map(([cadena,d])=>{
+            const qCount = data.filter(v=>v.cadena===cadena&&(v.quiebreBarras==='si'||v.quiebreMil==='si'||v.quiebreLec==='si')).length;
+            const bAvg = d.bN ? Math.round(d.bSum/d.bN)+'%' : '—';
+            const mAvg = d.mN ? Math.round(d.mSum/d.mN)+'%' : '—';
+            return `<tr><td>${cadena}</td><td>${d.visits}</td><td>${bAvg}</td><td>${mAvg}</td><td style="color:${qCount>0?'var(--red)':'var(--green)'}">${qCount}</td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
-// ══ CONFIG ══
-function guardarPerfil(){
-  const val=document.getElementById('cfg-field').value;
-  localStorage.setItem('notco_field',val);
-  document.getElementById('f-field').value=val;
-  showToast('✓ Perfil guardado');
+// ══════════════════════════════════════════
+// CSV EXPORT
+// ══════════════════════════════════════════
+function escCSV(val) { return '"' + String(val==null?'':val).replace(/"/g,'""') + '"'; }
+
+function exportCSV() {
+  if (!visitas.length) { showToast('No hay visitas para exportar'); return; }
+  const rows = visitas.map(v => vToRow(v).map(escCSV).join(','));
+  const csv = [CSV_HEADERS.map(escCSV).join(','), ...rows].join('\r\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = 'notco_visitas_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('✓ CSV descargado');
 }
 
-// ══ TOAST ══
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+// ══════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════
+function nuevaVisita() {
+  radios = {}; pasoActual = 1;
+  ['f-sucursal','f-contacto','f-obs-gen',
+   'f-m-total','f-m-notco','f-m-veg','f-m-gds','f-m-otros','f-pm-razon','f-obs-mil',
+   'f-b-total','f-b-notco','f-b-integra','f-b-otros','f-pb-razon',
+   'f-l-total','f-l-notco','f-l-comp','f-pl-razon','f-obs-lec','f-notas'
+  ].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('f-cadena').value = '';
+  document.querySelectorAll('.radio-opt').forEach(el => el.className = 'radio-opt');
+  document.querySelectorAll('.razon-wrap').forEach(el => el.style.display = 'none');
+  ['m','b','l'].forEach(cat => {
+    ['cam','gal'].forEach(src => { const inp = document.getElementById('foto-'+cat+'-'+src); if(inp) inp.value=''; });
+    const prev = document.getElementById('prev-'+cat); if(prev){prev.style.display='none';prev.src='';}
+    ['cam','gal'].forEach(src => { const btn = document.getElementById('btn-'+src+'-'+cat); if(btn) btn.classList.remove('taken'); });
+    calcShare(cat);
+  });
+  document.getElementById('paso-ok').style.display = 'none';
+  document.getElementById('paso-1').style.display = 'block';
+  document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+  const sf = localStorage.getItem('notco_field'); if(sf) document.getElementById('f-field').value = sf;
+  document.getElementById('progress-fill').style.width = '0%';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
 
 init();
 </script>
