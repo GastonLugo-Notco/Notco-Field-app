@@ -589,12 +589,9 @@ function init() {
   document.getElementById('f-fecha').value = now.toISOString().split('T')[0];
   const sf = localStorage.getItem('notco_field');
   if (sf) { document.getElementById('f-field').value = sf; document.getElementById('cfg-field').value = sf; }
-  if (sheetId) {
-    document.getElementById('cfg-sheet-id').value = sheetId;
-    updateSyncStatus(true);
-    document.getElementById('cfg-sheet-status').innerHTML = '<span style="color:var(--green)">✓ Conectado</span> — ' + sheetId.slice(0,30) + '...';
-    document.getElementById('sheet-setup-banner').style.display = 'none';
-  }
+  updateSyncStatus(true);
+  document.getElementById('cfg-sheet-status').innerHTML = '<span style="color:var(--green)">✓ Conectado a Supabase</span>';
+  document.getElementById('sheet-setup-banner').style.display = 'none';
 }
 
 // ══════════════════════════════════════════
@@ -784,13 +781,12 @@ async function guardarVisita() {
   try { localStorage.setItem('notco_visitas', JSON.stringify(visitas)); } catch(e) {}
 
   let msg = '✓ Guardado localmente.';
-  if (sheetId) {
-    try {
-      await appendToSheet(v);
-      msg = '✓ Guardado en Google Sheets. Todo el equipo puede verlo.';
-    } catch(e) {
-      msg = '⚠️ Guardado local. No se pudo sincronizar con Sheets.';
-    }
+  try {
+    await appendToSheet(v);
+    msg = '✓ Guardado en Supabase. Todo el equipo puede verlo.';
+  } catch(e) {
+    console.error(e);
+    msg = '⚠️ Guardado local. Error: ' + e.message;
   }
 
   btn.disabled = false; txt.textContent = 'Guardar visita';
@@ -820,69 +816,84 @@ function vToRow(v) {
   ];
 }
 
-const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/thenotcompany.com/s/AKfycbywi3bWe8C1whVFVJBzQMxP0aLhNFQ1BjpAO5iJ2GkMbYgtCTbpvF1zwS6nCfm9KSsHvg/exec';
+const SUPABASE_URL = 'https://vpewylzugoetmxgxwtkv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZXd5bHp1Z29ldG14Z3h3dGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjg4NTEsImV4cCI6MjA5NTc0NDg1MX0.rXOMrCJ2sCTeotzSJnQgzFsXECX2AyAIVFq6dHVulEU';
 
 async function appendToSheet(v) {
-  const payload = encodeURIComponent(JSON.stringify({
-    headers: CSV_HEADERS,
-    row: vToRow(v)
-  }));
-  const url = APPS_SCRIPT_URL + '?action=write&data=' + payload;
-  
-  return new Promise((resolve, reject) => {
-    // Crear iframe invisible — usa la sesión de Google del usuario
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = url;
-    iframe.onload = () => {
-      document.body.removeChild(iframe);
-      resolve();
-    };
-    iframe.onerror = () => {
-      document.body.removeChild(iframe);
-      // Intentar con window.open como fallback
-      const win = window.open(url, '_blank', 'width=1,height=1,left=-100,top=-100');
-      setTimeout(() => { try { win.close(); } catch(e) {} resolve(); }, 3000);
-    };
-    document.body.appendChild(iframe);
-    // Timeout de seguridad
-    setTimeout(() => {
-      try { document.body.removeChild(iframe); } catch(e) {}
-      resolve();
-    }, 5000);
+  const row = vToRow(v);
+  const obj = {};
+  CSV_HEADERS.forEach((h, i) => {
+    obj[h.toLowerCase().replace(/%/g,'pct').replace(/[^a-z0-9_]/g,'_')] = row[i] == null ? '' : String(row[i]);
   });
+  // Map to table columns
+  const record = {
+    fecha: obj.fecha, field: obj.field, cadena: obj.cadena, sucursal: obj.sucursal,
+    contacto: obj.contacto, repo: obj.repo, obs_general: obj.obs_general,
+    total_cat_milanesas: obj.total_cat_milanesas, notco_milanesas: obj.notco_milanesas,
+    vegetalex_milanesas: obj.vegetalex_milanesas, granjadelsol_milanesas: obj.granjadelsol_milanesas,
+    otros_milanesas: obj.otros_milanesas, share_milanesas: obj.share_notco_milanesas_pct,
+    quiebre_milanesas: obj.quiebre_milanesas, plano_milanesas: obj.plano_milanesas,
+    razon_plano_milanesas: obj.razon_plano_milanesas, obs_milanesas: obj.obs_milanesas,
+    foto_milanesas: obj.foto_milanesas,
+    total_cat_barras: obj.total_cat_barras, notco_barras: obj.notco_barras,
+    integra_barras: obj.integra_barras, otros_barras: obj.otros_barras,
+    share_barras: obj.share_notco_barras_pct, quiebre_barras: obj.quiebre_barras,
+    plano_barras: obj.plano_barras, razon_plano_barras: obj.razon_plano_barras,
+    foto_barras: obj.foto_barras,
+    total_cat_leches: obj.total_cat_leches, notco_leches: obj.notco_leches,
+    competencia_leches: obj.competencia_leches, share_leches: obj.share_notco_leches_pct,
+    quiebre_leches: obj.quiebre_leches, plano_leches: obj.plano_leches,
+    razon_plano_leches: obj.razon_plano_leches, obs_leches: obj.obs_leches,
+    foto_leches: obj.foto_leches,
+    oportunidad: obj.oportunidad_pedido, punteras: obj.punteras,
+    exhibiciones: obj.exhibiciones_adicionales, notas: obj.notas_finales
+  };
+  const res = await fetch(SUPABASE_URL + '/rest/v1/visitas', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(record)
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
+  }
 }
 
 async function loadFromSheet() {
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?action=read', {mode:'cors'});
-    const data = await res.json();
-    if (data.status !== 'ok' || !data.data || data.data.length < 2) return [];
-    const headers = data.data[0];
-    return data.data.slice(1).map(row => {
-      const obj = {};
-      headers.forEach((h,i) => obj[h] = row[i] || '');
-      return {
-        fecha: obj['Fecha'] || '',
-        field: obj['Field'] || '',
-        cadena: obj['Cadena'] || '',
-        sucursal: obj['Sucursal'] || '',
-        shareBarras: obj['Share_NotCo_Barras_%'] !== '' ? parseFloat(obj['Share_NotCo_Barras_%']) : null,
-        shareMil: obj['Share_NotCo_Milanesas_%'] !== '' ? parseFloat(obj['Share_NotCo_Milanesas_%']) : null,
-        shareLec: obj['Share_NotCo_Leches_%'] !== '' ? parseFloat(obj['Share_NotCo_Leches_%']) : null,
-        quiebreBarras: obj['Quiebre_Barras'] || '—',
-        quiebreMil: obj['Quiebre_Milanesas'] || '—',
-        quiebreLec: obj['Quiebre_Leches'] || '—',
-        oportunidad: obj['Oportunidad_Pedido'] || '—',
-        mNotco: parseFloat(obj['NotCo_Milanesas'])||0,
-        mVeg: parseFloat(obj['Vegetalex_Milanesas'])||0,
-        mGds: parseFloat(obj['GranjaDelSol_Milanesas'])||0,
-        bNotco: parseFloat(obj['NotCo_Barras'])||0,
-        bIntegra: parseFloat(obj['Integra_Barras'])||0,
-        lNotco: parseFloat(obj['NotCo_Leches'])||0,
-        lComp: parseFloat(obj['Competencia_Leches'])||0,
-      };
+    const res = await fetch(SUPABASE_URL + '/rest/v1/visitas?select=*&order=created_at.desc&limit=200', {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      }
     });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.map(r => ({
+      fecha: r.fecha || '',
+      field: r.field || '',
+      cadena: r.cadena || '',
+      sucursal: r.sucursal || '',
+      shareBarras: r.share_barras !== '' && r.share_barras != null ? parseFloat(r.share_barras) : null,
+      shareMil: r.share_milanesas !== '' && r.share_milanesas != null ? parseFloat(r.share_milanesas) : null,
+      shareLec: r.share_leches !== '' && r.share_leches != null ? parseFloat(r.share_leches) : null,
+      quiebreBarras: r.quiebre_barras || '—',
+      quiebreMil: r.quiebre_milanesas || '—',
+      quiebreLec: r.quiebre_leches || '—',
+      oportunidad: r.oportunidad || '—',
+      mNotco: parseFloat(r.notco_milanesas)||0,
+      mVeg: parseFloat(r.vegetalex_milanesas)||0,
+      mGds: parseFloat(r.granjadelsol_milanesas)||0,
+      bNotco: parseFloat(r.notco_barras)||0,
+      bIntegra: parseFloat(r.integra_barras)||0,
+      lNotco: parseFloat(r.notco_leches)||0,
+      lComp: parseFloat(r.competencia_leches)||0,
+    }));
   } catch(e) { return []; }
 }
 
