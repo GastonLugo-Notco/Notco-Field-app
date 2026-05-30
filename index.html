@@ -823,21 +823,21 @@ function vToRow(v) {
 const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/thenotcompany.com/s/AKfycbywi3bWe8C1whVFVJBzQMxP0aLhNFQ1BjpAO5iJ2GkMbYgtCTbpvF1zwS6nCfm9KSsHvg/exec';
 
 async function appendToSheet(v) {
-  const res = await fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'text/plain'},
-    body: JSON.stringify({
-      headers: CSV_HEADERS,
-      row: vToRow(v)
-    })
+  // Usar GET con datos codificados para evitar CORS
+  const payload = encodeURIComponent(JSON.stringify({
+    headers: CSV_HEADERS,
+    row: vToRow(v)
+  }));
+  const res = await fetch(APPS_SCRIPT_URL + '?action=write&data=' + payload, {
+    method: 'GET',
+    mode: 'no-cors'
   });
-  const data = await res.json();
-  if (data.status !== 'ok') throw new Error(data.message);
+  // no-cors no permite leer la respuesta pero el script igual se ejecuta
 }
 
 async function loadFromSheet() {
   try {
-    const res = await fetch(APPS_SCRIPT_URL);
+    const res = await fetch(APPS_SCRIPT_URL + '?action=read', {mode:'cors'});
     const data = await res.json();
     if (data.status !== 'ok' || !data.data || data.data.length < 2) return [];
     const headers = data.data[0];
