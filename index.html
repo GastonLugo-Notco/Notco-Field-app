@@ -823,16 +823,34 @@ function vToRow(v) {
 const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/thenotcompany.com/s/AKfycbywi3bWe8C1whVFVJBzQMxP0aLhNFQ1BjpAO5iJ2GkMbYgtCTbpvF1zwS6nCfm9KSsHvg/exec';
 
 async function appendToSheet(v) {
-  // Usar GET con datos codificados para evitar CORS
   const payload = encodeURIComponent(JSON.stringify({
     headers: CSV_HEADERS,
     row: vToRow(v)
   }));
-  const res = await fetch(APPS_SCRIPT_URL + '?action=write&data=' + payload, {
-    method: 'GET',
-    mode: 'no-cors'
+  const url = APPS_SCRIPT_URL + '?action=write&data=' + payload;
+  
+  return new Promise((resolve, reject) => {
+    // Crear iframe invisible — usa la sesión de Google del usuario
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    iframe.onload = () => {
+      document.body.removeChild(iframe);
+      resolve();
+    };
+    iframe.onerror = () => {
+      document.body.removeChild(iframe);
+      // Intentar con window.open como fallback
+      const win = window.open(url, '_blank', 'width=1,height=1,left=-100,top=-100');
+      setTimeout(() => { try { win.close(); } catch(e) {} resolve(); }, 3000);
+    };
+    document.body.appendChild(iframe);
+    // Timeout de seguridad
+    setTimeout(() => {
+      try { document.body.removeChild(iframe); } catch(e) {}
+      resolve();
+    }, 5000);
   });
-  // no-cors no permite leer la respuesta pero el script igual se ejecuta
 }
 
 async function loadFromSheet() {
