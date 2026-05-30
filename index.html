@@ -820,35 +820,28 @@ function vToRow(v) {
   ];
 }
 
-async function callClaude(prompt) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/thenotcompany.com/s/AKfycbywi3bWe8C1whVFVJBzQMxP0aLhNFQ1BjpAO5iJ2GkMbYgtCTbpvF1zwS6nCfm9KSsHvg/exec';
+
+async function appendToSheet(v) {
+  const res = await fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'text/plain'},
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      mcp_servers: [{type:'url', url:'https://drivemcp.googleapis.com/mcp/v1', name:'gdrive'}],
-      messages: [{role:'user', content: prompt}]
+      headers: CSV_HEADERS,
+      row: vToRow(v)
     })
   });
   const data = await res.json();
-  return data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-}
-
-async function appendToSheet(v) {
-  const row = vToRow(v).map(r => '"' + String(r==null?'':r).replace(/"/g,'""') + '"').join(', ');
-  await callClaude(`En el Google Spreadsheet con ID "${sheetId}", en la primera hoja, si la fila 1 está vacía primero escribí los encabezados: ${CSV_HEADERS.join(', ')}. Luego agregá una nueva fila al final con estos valores: ${row}. Solo hacé eso, sin responder nada.`);
+  if (data.status !== 'ok') throw new Error(data.message);
 }
 
 async function loadFromSheet() {
-  if (!sheetId) return [];
   try {
-    const txt = await callClaude(`Del Google Spreadsheet con ID "${sheetId}", leé todas las filas de la primera hoja y devolvé el contenido como JSON array de arrays. Solo el JSON, sin explicaciones ni markdown.`);
-    const clean = txt.replace(/```json|```/g,'').trim();
-    const rows = JSON.parse(clean);
-    if (rows.length < 2) return [];
-    const headers = rows[0];
-    return rows.slice(1).map(row => {
+    const res = await fetch(APPS_SCRIPT_URL);
+    const data = await res.json();
+    if (data.status !== 'ok' || !data.data || data.data.length < 2) return [];
+    const headers = data.data[0];
+    return data.data.slice(1).map(row => {
       const obj = {};
       headers.forEach((h,i) => obj[h] = row[i] || '');
       return {
