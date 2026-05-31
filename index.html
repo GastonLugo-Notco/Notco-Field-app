@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -775,8 +776,21 @@ async function guardarVisita() {
     notas: document.getElementById('f-notas').value,
   };
 
+  // Subir fotos a Supabase Storage
+  const visitaId = Date.now();
+  txt.innerHTML = '<div class="spinner"></div>';
+  try {
+    const [urlM, urlB, urlL] = await Promise.all([
+      uploadFoto('m', visitaId),
+      uploadFoto('b', visitaId),
+      uploadFoto('l', visitaId)
+    ]);
+    if (urlM) v.fotoMil = urlM;
+    if (urlB) v.fotoBarras = urlB;
+    if (urlL) v.fotoLec = urlL;
+  } catch(e) { console.error('Error subiendo fotos:', e); }
+
   visitas.push(v);
-  // Guardar en localStorage para que persistan aunque se recargue la página
   try { localStorage.setItem('notco_visitas', JSON.stringify(visitas)); } catch(e) {}
 
   let msg = '✓ Guardado localmente.';
@@ -817,6 +831,26 @@ function vToRow(v) {
 
 const SUPABASE_URL = 'https://vpewylzugoetmxgxwtkv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZXd5bHp1Z29ldG14Z3h3dGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjg4NTEsImV4cCI6MjA5NTc0NDg1MX0.rXOMrCJ2sCTeotzSJnQgzFsXECX2AyAIVFq6dHVulEU';
+
+async function uploadFoto(cat, visita_id) {
+  const camInput = document.getElementById('foto-' + cat + '-cam');
+  const galInput = document.getElementById('foto-' + cat + '-gal');
+  const file = (camInput && camInput.files[0]) || (galInput && galInput.files[0]);
+  if (!file) return null;
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `visita_${visita_id}_${cat}_${Date.now()}.${ext}`;
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/fotos-visitas/${path}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': file.type || 'image/jpeg'
+    },
+    body: file
+  });
+  if (!res.ok) return null;
+  return `${SUPABASE_URL}/storage/v1/object/public/fotos-visitas/${path}`;
+}
 
 async function appendToSheet(v) {
   const row = vToRow(v);
