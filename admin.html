@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notco Field — Panel de Análisis</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f5f5f7;color:#1a1a1a;min-height:100vh}
+.header{background:#1a1a2e;color:white;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:#1db97a;box-shadow:0 0 8px #1db97a}
+.header h1{font-size:18px;font-weight:600;color:white}
+.header p{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;font-family:'DM Mono',monospace}
+.btn-excel{background:#1db97a;color:#0f0f1a;border:none;padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px}
+.btn-excel:hover{background:#19a66d}
+.content{max-width:1200px;margin:0 auto;padding:24px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:white;border-radius:12px;padding:20px;border:1px solid #e5e5e5}
+.kpi-val{font-size:32px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-1px}
+.kpi-lbl{font-size:12px;color:#888;margin-top:4px}
+.kpi-green{color:#1db97a}.kpi-amber{color:#f5a623}.kpi-red{color:#e85d5d}.kpi-blue{color:#6c63ff}
+.card{background:white;border-radius:12px;border:1px solid #e5e5e5;margin-bottom:20px;overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:600;color:#1a1a2e}
+.card-sub{font-size:12px;color:#888}
+table{width:100%;border-collapse:collapse}
+th{background:#f8f8f8;padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e5e5e5;white-space:nowrap}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#333;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.badge{display:inline-block;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace}
+.badge-green{background:#eaf7f1;color:#1db97a}
+.badge-amber{background:#fef6e7;color:#f5a623}
+.badge-red{background:#fdeaea;color:#e85d5d}
+.badge-gray{background:#f0f0f0;color:#888}
+.share-bar-wrap{display:flex;align-items:center;gap:8px}
+.share-bar-track{width:80px;height:6px;background:#e5e5e5;border-radius:99px;overflow:hidden;flex-shrink:0}
+.share-bar-fill{height:100%;border-radius:99px}
+.filter-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.filter-select{padding:8px 12px;border:1px solid #e5e5e5;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;background:white;cursor:pointer}
+.loading{text-align:center;padding:60px;color:#888;font-size:14px}
+.empty{text-align:center;padding:60px;color:#888}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.refresh-btn{background:none;border:1px solid #e5e5e5;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:#555;display:flex;align-items:center;gap:6px}
+.refresh-btn:hover{background:#f5f5f5}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.online{background:#1db97a;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.foto-link{color:#6c63ff;text-decoration:none;font-size:12px}
+.foto-link:hover{text-decoration:underline}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:768px){.charts-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}}
+.chart-box{background:white;border-radius:12px;border:1px solid #e5e5e5;padding:20px}
+.chart-title{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:14px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{font-size:12px;color:#555;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:8px;background:#f0f0f0;border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width 0.5s}
+.bar-pct{font-size:12px;font-weight:600;font-family:'DM Mono',monospace;width:32px;text-align:right}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-dot"></div>
+    <div>
+      <h1>Notco Field — Panel de Análisis</h1>
+      <p><span class="status-dot online"></span><span id="status-txt">Cargando datos...</span></p>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="refresh-btn" onclick="loadData()">↻ Actualizar</button>
+    <button class="btn-excel" onclick="exportExcel()">⬇ Descargar Excel</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val kpi-blue" id="k-visitas">—</div><div class="kpi-lbl">Visitas totales</div></div>
+    <div class="kpi"><div class="kpi-val kpi-green" id="k-sb">—</div><div class="kpi-lbl">Share barras prom.</div></div>
+    <div class="kpi"><div class="kpi-val kpi-green" id="k-sm">—</div><div class="kpi-lbl">Share milanesas prom.</div></div>
+    <div class="kpi"><div class="kpi-val kpi-green" id="k-sl">—</div><div class="kpi-lbl">Share leches prom.</div></div>
+    <div class="kpi"><div class="kpi-val kpi-red" id="k-q">—</div><div class="kpi-lbl">Quiebres detectados</div></div>
+    <div class="kpi"><div class="kpi-val kpi-amber" id="k-op">—</div><div class="kpi-lbl">Oportunidades pedido</div></div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-bar">
+    <select class="filter-select" id="f-cadena" onchange="renderTable()">
+      <option value="">Todas las cadenas</option>
+    </select>
+    <select class="filter-select" id="f-field" onchange="renderTable()">
+      <option value="">Todos los fields</option>
+      <option>Gaston Lugo</option>
+      <option>Javier Zima</option>
+    </select>
+    <select class="filter-select" id="f-quiebre" onchange="renderTable()">
+      <option value="">Todos</option>
+      <option value="si">Con quiebre</option>
+      <option value="no">Sin quiebre</option>
+    </select>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-box">
+      <div class="chart-title">Share NotCo — Barras por cadena</div>
+      <div id="chart-barras"><div class="empty" style="padding:20px"><p style="font-size:12px">Sin datos</p></div></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Share NotCo — Milanesas por cadena</div>
+      <div id="chart-mil"><div class="empty" style="padding:20px"><p style="font-size:12px">Sin datos</p></div></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Share NotCo — Leches por cadena</div>
+      <div id="chart-lec"><div class="empty" style="padding:20px"><p style="font-size:12px">Sin datos</p></div></div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Registro de visitas</div>
+        <div class="card-sub" id="table-sub">Cargando...</div>
+      </div>
+    </div>
+    <div id="table-wrap">
+      <div class="loading">Cargando datos desde la nube...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://vpewylzugoetmxgxwtkv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZXd5bHp1Z29ldG14Z3h3dGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjg4NTEsImV4cCI6MjA5NTc0NDg1MX0.rXOMrCJ2sCTeotzSJnQgzFsXECX2AyAIVFq6dHVulEU';
+
+let allData = [];
+
+async function loadData() {
+  document.getElementById('status-txt').textContent = 'Actualizando...';
+  document.getElementById('table-wrap').innerHTML = '<div class="loading">Cargando datos...</div>';
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/visitas?select=*&order=created_at.desc&limit=1000', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    allData = await res.json();
+    document.getElementById('status-txt').textContent = 'En línea · ' + allData.length + ' visitas · Actualizado ' + new Date().toLocaleTimeString('es-AR');
+    populateFilters();
+    renderKPIs();
+    renderCharts();
+    renderTable();
+  } catch(e) {
+    document.getElementById('status-txt').textContent = 'Error de conexión';
+    document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudo conectar a la base de datos</p></div>';
+  }
+}
+
+function populateFilters() {
+  const cadenas = [...new Set(allData.map(r => r.cadena).filter(Boolean))].sort();
+  const sel = document.getElementById('f-cadena');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todas las cadenas</option>' + cadenas.map(c => `<option${cur===c?' selected':''}>${c}</option>`).join('');
+}
+
+function getFiltered() {
+  const cadena = document.getElementById('f-cadena').value;
+  const field = document.getElementById('f-field').value;
+  const quiebre = document.getElementById('f-quiebre').value;
+  return allData.filter(r => {
+    if (cadena && r.cadena !== cadena) return false;
+    if (field && r.field !== field) return false;
+    if (quiebre === 'si' && r.quiebre_barras !== 'si' && r.quiebre_milanesas !== 'si' && r.quiebre_leches !== 'si') return false;
+    if (quiebre === 'no' && (r.quiebre_barras === 'si' || r.quiebre_milanesas === 'si' || r.quiebre_leches === 'si')) return false;
+    return true;
+  });
+}
+
+function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
+
+function renderKPIs() {
+  const d = allData;
+  const n = d.length;
+  document.getElementById('k-visitas').textContent = n;
+  const bS = d.filter(r=>r.share_barras!==null&&r.share_barras!=='').map(r=>parseFloat(r.share_barras));
+  const mS = d.filter(r=>r.share_milanesas!==null&&r.share_milanesas!=='').map(r=>parseFloat(r.share_milanesas));
+  const lS = d.filter(r=>r.share_leches!==null&&r.share_leches!=='').map(r=>parseFloat(r.share_leches));
+  const sb = avg(bS); const sm = avg(mS); const sl = avg(lS);
+  document.getElementById('k-sb').textContent = sb !== null ? sb+'%' : '—';
+  document.getElementById('k-sm').textContent = sm !== null ? sm+'%' : '—';
+  document.getElementById('k-sl').textContent = sl !== null ? sl+'%' : '—';
+  document.getElementById('k-q').textContent = d.filter(r=>r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si').length;
+  document.getElementById('k-op').textContent = d.filter(r=>r.oportunidad==='si').length;
+}
+
+function renderCharts() {
+  const cadMap = {};
+  allData.forEach(r => {
+    if (!cadMap[r.cadena]) cadMap[r.cadena] = {bS:0,bN:0,mS:0,mN:0,lS:0,lN:0};
+    if (r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
+    if (r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
+    if (r.share_leches!==''&&r.share_leches!=null){cadMap[r.cadena].lS+=parseFloat(r.share_leches);cadMap[r.cadena].lN++;}
+  });
+
+  function makeChart(elId, getter, color) {
+    const items = Object.entries(cadMap).map(([c,d]) => ({c, v:getter(d)})).filter(x=>x.v!==null).sort((a,b)=>b.v-a.v);
+    if (!items.length) return;
+    document.getElementById(elId).innerHTML = items.map(({c,v}) => `
+      <div class="bar-row">
+        <span class="bar-label" title="${c}">${c}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${v}%;background:${color}"></div></div>
+        <span class="bar-pct" style="color:${color}">${v}%</span>
+      </div>`).join('');
+  }
+
+  makeChart('chart-barras', d => d.bN ? Math.round(d.bS/d.bN) : null, '#1db97a');
+  makeChart('chart-mil',    d => d.mN ? Math.round(d.mS/d.mN) : null, '#6c63ff');
+  makeChart('chart-lec',    d => d.lN ? Math.round(d.lS/d.lN) : null, '#f5a623');
+}
+
+function shareTag(val) {
+  if (val === null || val === '' || val === undefined) return '<span class="badge badge-gray">—</span>';
+  const n = parseFloat(val);
+  const cls = n>=40?'badge-green':n>=20?'badge-amber':'badge-red';
+  return `<span class="badge ${cls}">${n}%</span>`;
+}
+
+function renderTable() {
+  const data = getFiltered();
+  document.getElementById('table-sub').textContent = data.length + ' visitas' + (data.length !== allData.length ? ' (filtradas)' : '');
+  if (!data.length) {
+    document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>No hay visitas que coincidan con los filtros</p></div>';
+    return;
+  }
+  document.getElementById('table-wrap').innerHTML = `
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th><th>Field</th><th>Cadena</th><th>Sucursal</th>
+          <th>Share Barras</th><th>Share Milanesas</th><th>Share Leches</th>
+          <th>Quiebre</th><th>Planograma</th><th>Oportunidad</th><th>Punteras</th><th>Exhibiciones</th><th>Contacto</th><th>Obs. General</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map(r => `
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px">${r.fecha||'—'}</td>
+            <td>${r.field||'—'}</td>
+            <td><strong>${r.cadena||'—'}</strong></td>
+            <td style="font-family:'DM Mono',monospace">#${r.sucursal||'?'}</td>
+            <td>${shareTag(r.share_barras)}</td>
+            <td>${shareTag(r.share_milanesas)}</td>
+            <td>${shareTag(r.share_leches)}</td>
+            <td>${(r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si')?'<span class="badge badge-red">Sí</span>':'<span class="badge badge-green">No</span>'}</td>
+            <td>${(r.plano_barras==='no'||r.plano_milanesas==='no'||r.plano_leches==='no')?'<span class="badge badge-red">No</span>':'<span class="badge badge-green">Sí</span>'}</td>
+            <td>${r.oportunidad==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
+            <td>${r.punteras==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
+            <td>${r.exhibiciones==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
+            <td style="font-size:12px;color:#888">${r.contacto||'—'}</td>
+            <td style="font-size:12px;color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs_general||'—'}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+    </div>`;
+}
+
+function exportExcel() {
+  if (!allData.length) { alert('No hay datos para exportar'); return; }
+  const wb = XLSX.utils.book_new();
+
+  // Hoja datos
+  const headers = ['Fecha','Field','Cadena','Sucursal','Contacto','Repo','Obs General',
+    'Total Milanesas','NotCo Mil','Vegetalex','Granja del Sol','Otros Mil','Share Mil %','Quiebre Mil','Plano Mil','Razon Plano Mil','Obs Mil',
+    'Total Barras','NotCo Barras','Integra','Otros Barras','Share Barras %','Quiebre Barras','Plano Barras','Razon Plano Barras',
+    'Total Leches','NotCo Leches','Competencia Leches','Share Leches %','Quiebre Leches','Plano Leches','Razon Plano Leches','Obs Leches',
+    'Oportunidad','Punteras','Exhibiciones','Notas'];
+
+  const rows = allData.map(r => [
+    r.fecha, r.field, r.cadena, r.sucursal, r.contacto, r.repo, r.obs_general,
+    r.total_cat_milanesas, r.notco_milanesas, r.vegetalex_milanesas, r.granjadelsol_milanesas, r.otros_milanesas, r.share_milanesas, r.quiebre_milanesas, r.plano_milanesas, r.razon_plano_milanesas, r.obs_milanesas,
+    r.total_cat_barras, r.notco_barras, r.integra_barras, r.otros_barras, r.share_barras, r.quiebre_barras, r.plano_barras, r.razon_plano_barras,
+    r.total_cat_leches, r.notco_leches, r.competencia_leches, r.share_leches, r.quiebre_leches, r.plano_leches, r.razon_plano_leches, r.obs_leches,
+    r.oportunidad, r.punteras, r.exhibiciones, r.notas
+  ]);
+
+  const ws1 = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws1['!cols'] = headers.map(h => ({wch: Math.max(12, h.length * 1.1)}));
+  XLSX.utils.book_append_sheet(wb, ws1, 'Datos');
+
+  // Hoja dashboard
+  const cadMap = {};
+  allData.forEach(r => {
+    if (!cadMap[r.cadena]) cadMap[r.cadena] = {n:0,bS:0,bN:0,mS:0,mN:0,lS:0,lN:0,q:0};
+    cadMap[r.cadena].n++;
+    if(r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
+    if(r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
+    if(r.share_leches!==''&&r.share_leches!=null){cadMap[r.cadena].lS+=parseFloat(r.share_leches);cadMap[r.cadena].lN++;}
+    if(r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si') cadMap[r.cadena].q++;
+  });
+
+  const bShares = allData.filter(r=>r.share_barras!==''&&r.share_barras!=null).map(r=>parseFloat(r.share_barras));
+  const mShares = allData.filter(r=>r.share_milanesas!==''&&r.share_milanesas!=null).map(r=>parseFloat(r.share_milanesas));
+  const lShares = allData.filter(r=>r.share_leches!==''&&r.share_leches!=null).map(r=>parseFloat(r.share_leches));
+
+  const dashData = [
+    ['NOTCO — Dashboard de Visitas Field 2025'],
+    ['Generado: ' + new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')],
+    [''],
+    ['RESUMEN EJECUTIVO'],
+    ['Visitas Totales', 'Share Barras Prom.', 'Share Milanesas Prom.', 'Share Leches Prom.', 'Quiebres', 'Oportunidades'],
+    [
+      allData.length,
+      bShares.length ? Math.round(bShares.reduce((a,b)=>a+b,0)/bShares.length)+'%' : '—',
+      mShares.length ? Math.round(mShares.reduce((a,b)=>a+b,0)/mShares.length)+'%' : '—',
+      lShares.length ? Math.round(lShares.reduce((a,b)=>a+b,0)/lShares.length)+'%' : '—',
+      allData.filter(r=>r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si').length,
+      allData.filter(r=>r.oportunidad==='si').length
+    ],
+    [''],
+    ['SHARE POR CADENA'],
+    ['Cadena', 'Visitas', 'Share Barras %', 'Share Milanesas %', 'Share Leches %', 'Quiebres'],
+    ...Object.entries(cadMap).sort((a,b)=>b[1].n-a[1].n).map(([c,d]) => [
+      c, d.n,
+      d.bN ? Math.round(d.bS/d.bN) : '—',
+      d.mN ? Math.round(d.mS/d.mN) : '—',
+      d.lN ? Math.round(d.lS/d.lN) : '—',
+      d.q
+    ])
+  ];
+
+  const ws2 = XLSX.utils.aoa_to_sheet(dashData);
+  ws2['!cols'] = [{wch:20},{wch:10},{wch:18},{wch:20},{wch:18},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Dashboard');
+
+  XLSX.writeFile(wb, 'notco_visitas_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+
+loadData();
+// Auto-refresh cada 60 segundos
+setInterval(loadData, 60000);
+</script>
+</body>
+</html>
