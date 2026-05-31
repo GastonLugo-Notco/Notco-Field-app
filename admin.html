@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -225,6 +226,12 @@ function renderCharts() {
   makeChart('chart-lec',    d => d.lN ? Math.round(d.lS/d.lN) : null, '#f5a623');
 }
 
+function fotoBtn(url, label) {
+  if (!url || url === 'No' || url === '—') return '<span style="color:#ccc;font-size:11px">—</span>';
+  if (url === 'Sí') return '<span style="color:#888;font-size:11px">Sí</span>';
+  return `<a href="${url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;background:#f0f0ff;color:#6c63ff;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none">📷 ${label}</a>`;
+}
+
 function shareTag(val) {
   if (val === null || val === '' || val === undefined) return '<span class="badge badge-gray">—</span>';
   const n = parseFloat(val);
@@ -246,7 +253,7 @@ function renderTable() {
         <tr>
           <th>Fecha</th><th>Field</th><th>Cadena</th><th>Sucursal</th>
           <th>Share Barras</th><th>Share Milanesas</th><th>Share Leches</th>
-          <th>Quiebre</th><th>Planograma</th><th>Oportunidad</th><th>Punteras</th><th>Exhibiciones</th><th>Contacto</th><th>Obs. General</th>
+          <th>Quiebre</th><th>Planograma</th><th>Oportunidad</th><th>Punteras</th><th>Exhibiciones</th><th>Contacto</th><th>Obs. General</th><th>Foto Mil</th><th>Foto Barras</th><th>Foto Leches</th>
         </tr>
       </thead>
       <tbody>
@@ -266,6 +273,9 @@ function renderTable() {
             <td>${r.exhibiciones==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
             <td style="font-size:12px;color:#888">${r.contacto||'—'}</td>
             <td style="font-size:12px;color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs_general||'—'}</td>
+          <td>${fotoBtn(r.foto_milanesas,'Mil')}</td>
+          <td>${fotoBtn(r.foto_barras,'Bar')}</td>
+          <td>${fotoBtn(r.foto_leches,'Lec')}</td>
           </tr>`).join('')}
       </tbody>
     </table>
