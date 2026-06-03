@@ -156,7 +156,12 @@ async function loadData() {
     const res = await fetch(SUPABASE_URL + '/rest/v1/visitas?select=*&order=created_at.desc&limit=1000', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
-    allData = await res.json();
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (Array.isArray(json)) {
+      allData = json;
+      try { localStorage.setItem('notco_admin_cache', JSON.stringify(allData)); } catch(e) {}
+    }
     document.getElementById('status-txt').textContent = 'En línea · ' + allData.length + ' visitas · Actualizado ' + new Date().toLocaleTimeString('es-AR');
     populateFilters();
     populateMonths();
@@ -164,8 +169,21 @@ async function loadData() {
     renderCharts();
     renderTable();
   } catch(e) {
-    document.getElementById('status-txt').textContent = 'Error de conexión';
-    document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudo conectar a la base de datos</p></div>';
+    // Try loading from cache
+    try {
+      const cached = localStorage.getItem('notco_admin_cache');
+      if (cached) {
+        allData = JSON.parse(cached);
+        document.getElementById('status-txt').textContent = 'Datos en caché · ' + allData.length + ' visitas (sin conexión)';
+      } else {
+        document.getElementById('status-txt').textContent = 'Error de conexión: ' + e.message;
+        document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudo conectar. Reintentá en unos segundos.</p></div>';
+        return;
+      }
+    } catch(ce) {
+      document.getElementById('status-txt').textContent = 'Error de conexión';
+      return;
+    }
   }
 }
 
@@ -235,7 +253,7 @@ function renderKPIs() {
 
 function renderCharts() {
   const cadMap = {};
-  allData.forEach(r => {
+  getFiltered().forEach(r => {
     if (!cadMap[r.cadena]) cadMap[r.cadena] = {bS:0,bN:0,mS:0,mN:0,lS:0,lN:0};
     if (r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
     if (r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
