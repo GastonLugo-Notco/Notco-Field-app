@@ -153,9 +153,14 @@ async function loadData() {
   document.getElementById('status-txt').textContent = 'Actualizando...';
   document.getElementById('table-wrap').innerHTML = '<div class="loading">Cargando datos...</div>';
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     const res = await fetch(SUPABASE_URL + '/rest/v1/visitas?select=*&order=created_at.desc&limit=1000', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      signal: controller.signal
     });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     allData = await res.json();
     document.getElementById('status-txt').textContent = 'En línea · ' + allData.length + ' visitas · Actualizado ' + new Date().toLocaleTimeString('es-AR');
     populateFilters();
@@ -164,8 +169,9 @@ async function loadData() {
     renderCharts();
     renderTable();
   } catch(e) {
-    document.getElementById('status-txt').textContent = 'Error de conexión';
-    document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudo conectar a la base de datos</p></div>';
+    document.getElementById('status-txt').textContent = 'Error: ' + e.message;
+    document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudo conectar. Reintentando en 5 segundos...</p></div>';
+    setTimeout(loadData, 5000);
   }
 }
 
