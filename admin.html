@@ -92,20 +92,24 @@ tr:hover td{background:#fafafa}
   </div>
 
   <!-- Filtros -->
-  <div class="filter-bar">
-    <select class="filter-select" id="f-cadena" onchange="renderTable()">
+  <div class="filter-bar" style="gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <select class="filter-select" id="f-mes" onchange="applyFilters()" style="min-width:110px">
+      <option value="">Todos los meses</option>
+    </select>
+    <select class="filter-select" id="f-cadena" onchange="applyFilters()">
       <option value="">Todas las cadenas</option>
     </select>
-    <select class="filter-select" id="f-field" onchange="renderTable()">
+    <select class="filter-select" id="f-field" onchange="applyFilters()">
       <option value="">Todos los fields</option>
       <option>Gaston Lugo</option>
       <option>Javier Zima</option>
     </select>
-    <select class="filter-select" id="f-quiebre" onchange="renderTable()">
+    <select class="filter-select" id="f-quiebre" onchange="applyFilters()">
       <option value="">Todos</option>
       <option value="si">Con quiebre</option>
       <option value="no">Sin quiebre</option>
     </select>
+    <button onclick="clearFilters()" style="padding:8px 14px;border:1px solid #e5e5e5;border-radius:8px;background:white;font-size:12px;cursor:pointer;color:#888">✕ Limpiar</button>
   </div>
 
   <!-- Charts -->
@@ -175,7 +179,9 @@ function getFiltered() {
   const cadena = document.getElementById('f-cadena').value;
   const field = document.getElementById('f-field').value;
   const quiebre = document.getElementById('f-quiebre').value;
+  const mes = document.getElementById('f-mes').value;
   return allData.filter(r => {
+    if (mes && r.fecha && r.fecha.slice(0,7) !== mes) return false;
     if (cadena && r.cadena !== cadena) return false;
     if (field && r.field !== field) return false;
     if (quiebre === 'si' && r.quiebre_barras !== 'si' && r.quiebre_milanesas !== 'si' && r.quiebre_leches !== 'si') return false;
@@ -184,10 +190,37 @@ function getFiltered() {
   });
 }
 
+function applyFilters() {
+  renderKPIs();
+  renderCharts();
+  renderTable();
+}
+
+function clearFilters() {
+  document.getElementById('f-mes').value = '';
+  document.getElementById('f-cadena').value = '';
+  document.getElementById('f-field').value = '';
+  document.getElementById('f-quiebre').value = '';
+  applyFilters();
+}
+
+function populateMonths() {
+  const months = new Set();
+  data.forEach(r => { if(r.fecha) months.add(r.fecha.slice(0,7)); });
+  const sorted = [...months].sort().reverse();
+  const sel = document.getElementById('f-mes');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todos los meses</option>' + sorted.map(m => {
+    const [y, mo] = m.split('-');
+    const label = new Date(y, parseInt(mo)-1).toLocaleDateString('es-AR', {month:'long', year:'numeric'});
+    return '<option value="'+m+'"'+(cur===m?' selected':'')+'>'+label+'</option>';
+  }).join('');
+}
+
 function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
 
 function renderKPIs() {
-  const d = allData;
+  const d = getFiltered();
   const n = d.length;
   document.getElementById('k-visitas').textContent = n;
   const bS = d.filter(r=>r.share_barras!==null&&r.share_barras!=='').map(r=>parseFloat(r.share_barras));
@@ -202,8 +235,9 @@ function renderKPIs() {
 }
 
 function renderCharts() {
+  const data = getFiltered();
   const cadMap = {};
-  allData.forEach(r => {
+  data.forEach(r => {
     if (!cadMap[r.cadena]) cadMap[r.cadena] = {bS:0,bN:0,mS:0,mN:0,lS:0,lN:0};
     if (r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
     if (r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
@@ -253,7 +287,7 @@ function renderTable() {
         <tr>
           <th>Fecha</th><th>Field</th><th>Cadena</th><th>Sucursal</th>
           <th>Share Barras</th><th>Share Milanesas</th><th>Share Leches</th>
-          <th>Quiebre</th><th>Planograma</th><th>Oportunidad</th><th>Punteras</th><th>Exhibiciones</th><th>Contacto</th><th>Obs. General</th><th>Foto Mil</th><th>Foto Barras</th><th>Foto Leches</th>
+          <th>Quiebre</th><th>Planograma</th><th>Oportunidad</th><th>Punteras</th><th>Exhibiciones</th><th>Contacto</th><th>Obs. Milanesas</th><th>Obs. Leches</th><th>Foto Mil</th><th>Foto Barras</th><th>Foto Leches</th>
         </tr>
       </thead>
       <tbody>
@@ -272,7 +306,8 @@ function renderTable() {
             <td>${r.punteras==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
             <td>${r.exhibiciones==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
             <td style="font-size:12px;color:#888">${r.contacto||'—'}</td>
-            <td style="font-size:12px;color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs_general||'—'}</td>
+            <td style="font-size:12px;color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs_milanesas||'—'}</td>
+          <td style="font-size:12px;color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs_leches||'—'}</td>
           <td>${fotoBtn(r.foto_milanesas,'Mil')}</td>
           <td>${fotoBtn(r.foto_barras,'Bar')}</td>
           <td>${fotoBtn(r.foto_leches,'Lec')}</td>
@@ -307,7 +342,7 @@ function exportExcel() {
 
   // Hoja dashboard
   const cadMap = {};
-  allData.forEach(r => {
+  data.forEach(r => {
     if (!cadMap[r.cadena]) cadMap[r.cadena] = {n:0,bS:0,bN:0,mS:0,mN:0,lS:0,lN:0,q:0};
     cadMap[r.cadena].n++;
     if(r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
