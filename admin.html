@@ -159,6 +159,7 @@ async function loadData() {
     allData = await res.json();
     document.getElementById('status-txt').textContent = 'En línea · ' + allData.length + ' visitas · Actualizado ' + new Date().toLocaleTimeString('es-AR');
     populateFilters();
+    populateMonths();
     renderKPIs();
     renderCharts();
     renderTable();
