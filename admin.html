@@ -5,100 +5,81 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Notco Field — Panel de Análisis</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:#f5f5f7;color:#1a1a1a;min-height:100vh}
-.header{background:#1a1a2e;color:white;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-left{display:flex;align-items:center;gap:12px}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:#1db97a;box-shadow:0 0 8px #1db97a}
-.header h1{font-size:18px;font-weight:600;color:white}
-.header p{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;font-family:'DM Mono',monospace}
-.btn-excel{background:#1db97a;color:#0f0f1a;border:none;padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px}
-.btn-excel:hover{background:#19a66d}
-.content{max-width:1200px;margin:0 auto;padding:24px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
-.kpi{background:white;border-radius:12px;padding:20px;border:1px solid #e5e5e5}
-.kpi-val{font-size:32px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-1px}
-.kpi-lbl{font-size:12px;color:#888;margin-top:4px}
-.kpi-green{color:#1db97a}.kpi-amber{color:#f5a623}.kpi-red{color:#e85d5d}.kpi-blue{color:#6c63ff}
-.card{background:white;border-radius:12px;border:1px solid #e5e5e5;margin-bottom:20px;overflow:hidden}
-.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
-.card-title{font-size:14px;font-weight:600;color:#1a1a2e}
+.header{background:#1a1a2e;color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:16px;font-weight:600;color:white}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;font-family:'DM Mono',monospace}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#1db97a;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.btn-excel{background:#1db97a;color:#0f0f1a;border:none;padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.content{max-width:1400px;margin:0 auto;padding:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:white;border-radius:10px;padding:16px;border:1px solid #e5e5e5}
+.kpi-val{font-size:28px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-1px}
+.kpi-lbl{font-size:11px;color:#888;margin-top:4px}
+.kpi-blue{color:#6c63ff}.kpi-green{color:#1db97a}.kpi-red{color:#e85d5d}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-select{padding:8px 12px;border:1px solid #e5e5e5;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;background:white;cursor:pointer;min-width:130px}
+.btn-clear{padding:8px 14px;border:1px solid #e5e5e5;border-radius:8px;background:white;font-size:12px;cursor:pointer;color:#888;font-family:'DM Sans',sans-serif}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.chart-box{background:white;border-radius:10px;border:1px solid #e5e5e5;padding:16px}
+.chart-title{font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{font-size:11px;color:#555;width:75px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:7px;background:#f0f0f0;border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width 0.4s}
+.bar-pct{font-size:11px;font-weight:600;font-family:'DM Mono',monospace;width:34px;text-align:right}
+.card{background:white;border-radius:10px;border:1px solid #e5e5e5;margin-bottom:16px;overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-title{font-size:14px;font-weight:600}
 .card-sub{font-size:12px;color:#888}
-table{width:100%;border-collapse:collapse}
-th{background:#f8f8f8;padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e5e5e5;white-space:nowrap}
-td{padding:12px 16px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#333;vertical-align:middle}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8f8f8;padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e5e5e5;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid #f5f5f5;color:#333;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fafafa}
-.badge{display:inline-block;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace}
 .badge-green{background:#eaf7f1;color:#1db97a}
-.badge-amber{background:#fef6e7;color:#f5a623}
 .badge-red{background:#fdeaea;color:#e85d5d}
+.badge-amber{background:#fef6e7;color:#f5a623}
 .badge-gray{background:#f0f0f0;color:#888}
-.share-bar-wrap{display:flex;align-items:center;gap:8px}
-.share-bar-track{width:80px;height:6px;background:#e5e5e5;border-radius:99px;overflow:hidden;flex-shrink:0}
-.share-bar-fill{height:100%;border-radius:99px}
-.filter-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.filter-select{padding:8px 12px;border:1px solid #e5e5e5;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;background:white;cursor:pointer}
-.loading{text-align:center;padding:60px;color:#888;font-size:14px}
-.empty{text-align:center;padding:60px;color:#888}
-.empty-icon{font-size:40px;margin-bottom:12px}
-.refresh-btn{background:none;border:1px solid #e5e5e5;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:#555;display:flex;align-items:center;gap:6px}
-.refresh-btn:hover{background:#f5f5f5}
-.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-.online{background:#1db97a;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.foto-link{color:#6c63ff;text-decoration:none;font-size:12px}
-.foto-link:hover{text-decoration:underline}
-.charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
-@media(max-width:768px){.charts-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}}
-.chart-box{background:white;border-radius:12px;border:1px solid #e5e5e5;padding:20px}
-.chart-title{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:14px}
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.bar-label{font-size:12px;color:#555;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar-track{flex:1;height:8px;background:#f0f0f0;border-radius:99px;overflow:hidden}
-.bar-fill{height:100%;border-radius:99px;transition:width 0.5s}
-.bar-pct{font-size:12px;font-weight:600;font-family:'DM Mono',monospace;width:32px;text-align:right}
+.foto-btn{display:inline-flex;align-items:center;gap:3px;background:#f0f0ff;color:#6c63ff;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none}
+.empty-state{text-align:center;padding:48px;color:#aaa}
+.no-data{font-size:12px;color:#ccc;text-align:center;padding:20px}
+@media(max-width:900px){.charts-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-left">
-    <div class="logo-dot"></div>
-    <div>
-      <h1>Notco Field — Panel de Análisis</h1>
-      <p><span class="status-dot online"></span><span id="status-txt">Cargando datos...</span></p>
-    </div>
+  <div>
+    <h1><span class="status-dot" id="sdot"></span>Notco Field — Panel de Análisis</h1>
+    <div class="header-sub" id="status-txt">Cargando...</div>
   </div>
-  <div style="display:flex;gap:10px;align-items:center">
-    <button class="refresh-btn" onclick="loadData()">↻ Actualizar</button>
+  <div style="display:flex;gap:8px">
+    <button class="btn-clear" style="color:white;border-color:rgba(255,255,255,0.3)" onclick="loadData()">↻ Actualizar</button>
     <button class="btn-excel" onclick="exportExcel()">⬇ Descargar Excel</button>
   </div>
 </div>
 
 <div class="content">
 
-  <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi"><div class="kpi-val kpi-blue" id="k-visitas">—</div><div class="kpi-lbl">Visitas totales</div></div>
     <div class="kpi"><div class="kpi-val kpi-green" id="k-sb">—</div><div class="kpi-lbl">Share barras prom.</div></div>
     <div class="kpi"><div class="kpi-val kpi-green" id="k-sm">—</div><div class="kpi-lbl">Share milanesas prom.</div></div>
     <div class="kpi"><div class="kpi-val kpi-green" id="k-sl">—</div><div class="kpi-lbl">Share leches prom.</div></div>
     <div class="kpi"><div class="kpi-val kpi-red" id="k-q">—</div><div class="kpi-lbl">Quiebres detectados</div></div>
-    
   </div>
 
-  <!-- Filtros -->
   <div class="filter-bar">
-    <select class="filter-select" id="f-mes" onchange="renderAll()" style="min-width:130px">
-      <option value="">Todos los meses</option>
-    </select>
-    <select class="filter-select" id="f-cadena" onchange="renderAll()">
-      <option value="">Todas las cadenas</option>
-    </select>
+    <select class="filter-select" id="f-mes" onchange="renderAll()"><option value="">Todos los meses</option></select>
+    <select class="filter-select" id="f-cadena" onchange="renderAll()"><option value="">Todas las cadenas</option></select>
     <select class="filter-select" id="f-field" onchange="renderAll()">
       <option value="">Todos los fields</option>
       <option>Gaston Lugo</option>
@@ -109,97 +90,70 @@ tr:hover td{background:#fafafa}
       <option value="si">Con quiebre</option>
       <option value="no">Sin quiebre</option>
     </select>
-    <button onclick="clearFilters()" style="padding:8px 14px;border:1px solid #e5e5e5;border-radius:8px;background:white;font-size:12px;cursor:pointer;color:#888">✕ Limpiar</button>
+    <button class="btn-clear" onclick="clearFilters()">✕ Limpiar</button>
   </div>
 
-  <!-- Charts -->
   <div class="charts-grid">
-    <div class="chart-box">
-      <div class="chart-title">Share NotCo — Barras por cadena</div>
-      <div id="chart-barras"><div class="empty" style="padding:20px"><p style="font-size:12px">Sin datos</p></div></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Share NotCo — Milanesas por cadena</div>
-      <div id="chart-mil"><div class="empty" style="padding:20px"><p style="font-size:12px">Sin datos</p></div></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Share NotCo — Leches por cadena</div>
-      <div id="chart-lec"><div class="empty" style="padding:20px"><p style="font-size:12px">Sin datos</p></div></div>
-    </div>
+    <div class="chart-box"><div class="chart-title">Share NotCo — Barras por cadena</div><div id="chart-b"><div class="no-data">Sin datos</div></div></div>
+    <div class="chart-box"><div class="chart-title">Share NotCo — Milanesas por cadena</div><div id="chart-m"><div class="no-data">Sin datos</div></div></div>
+    <div class="chart-box"><div class="chart-title">Share NotCo — Leches por cadena</div><div id="chart-l"><div class="no-data">Sin datos</div></div></div>
   </div>
 
-  <!-- Tabla -->
   <div class="card">
     <div class="card-header">
-      <div>
-        <div class="card-title">Registro de visitas</div>
-        <div class="card-sub" id="table-sub">Cargando...</div>
-      </div>
+      <div class="card-title">Registro de visitas</div>
+      <div class="card-sub" id="table-sub">—</div>
     </div>
-    <div id="table-wrap">
-      <div class="loading">Cargando datos desde la nube...</div>
-    </div>
+    <div class="table-wrap" id="table-wrap"><div class="empty-state">Cargando...</div></div>
   </div>
 
 </div>
 
 <script>
-const SUPABASE_URL = 'https://vpewylzugoetmxgxwtkv.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZXd5bHp1Z29ldG14Z3h3dGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjg4NTEsImV4cCI6MjA5NTc0NDg1MX0.rXOMrCJ2sCTeotzSJnQgzFsXECX2AyAIVFq6dHVulEU';
-
-let allData = [];
+var SUPABASE_URL = 'https://vpewylzugoetmxgxwtkv.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZXd5bHp1Z29ldG14Z3h3dGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjg4NTEsImV4cCI6MjA5NTc0NDg1MX0.rXOMrCJ2sCTeotzSJnQgzFsXECX2AyAIVFq6dHVulEU';
+var allData = [];
 
 async function loadData() {
   document.getElementById('status-txt').textContent = 'Actualizando...';
-  document.getElementById('table-wrap').innerHTML = '<div class="loading">Cargando datos...</div>';
+  document.getElementById('sdot').style.background = '#f5a623';
   try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/visitas?select=*&order=created_at.desc&limit=1000', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    var res = await fetch(SUPABASE_URL + '/rest/v1/visitas?select=*&order=created_at.desc&limit=1000', {
+      headers: {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY}
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
+    var json = await res.json();
     if (Array.isArray(json)) {
       allData = json;
       try { localStorage.setItem('notco_admin_cache', JSON.stringify(allData)); } catch(e) {}
     }
-    document.getElementById('status-txt').textContent = 'En línea · ' + allData.length + ' visitas · Actualizado ' + new Date().toLocaleTimeString('es-AR');
-    populateFilters();
-    populateMonths();
-    renderKPIs();
-    renderCharts();
-    renderTable();
+    document.getElementById('sdot').style.background = '#1db97a';
+    document.getElementById('status-txt').textContent = 'En linea · ' + allData.length + ' visitas · ' + new Date().toLocaleTimeString('es-AR');
   } catch(e) {
-    // Try loading from cache
     try {
-      const cached = localStorage.getItem('notco_admin_cache');
+      var cached = localStorage.getItem('notco_admin_cache');
       if (cached) {
         allData = JSON.parse(cached);
-        document.getElementById('status-txt').textContent = 'Datos en caché · ' + allData.length + ' visitas (sin conexión)';
+        document.getElementById('sdot').style.background = '#f5a623';
+        document.getElementById('status-txt').textContent = 'Cache · ' + allData.length + ' visitas (sin conexion en este momento)';
       } else {
-        document.getElementById('status-txt').textContent = 'Error de conexión: ' + e.message;
-        document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudo conectar. Reintentá en unos segundos.</p></div>';
+        document.getElementById('sdot').style.background = '#e85d5d';
+        document.getElementById('status-txt').textContent = 'Sin datos. Reintenta en unos segundos.';
+        document.getElementById('table-wrap').innerHTML = '<div class="empty-state">Sin conexion a la base de datos</div>';
         return;
       }
-    } catch(ce) {
-      document.getElementById('status-txt').textContent = 'Error de conexión';
-      return;
-    }
+    } catch(ce) { return; }
   }
-}
-
-function populateFilters() {
-  const cadenas = [...new Set(allData.map(r => r.cadena).filter(Boolean))].sort();
-  const sel = document.getElementById('f-cadena');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Todas las cadenas</option>' + cadenas.map(c => `<option${cur===c?' selected':''}>${c}</option>`).join('');
+  populateFilters();
+  renderAll();
 }
 
 function getFiltered() {
-  const mes = document.getElementById('f-mes').value;
-  const cadena = document.getElementById('f-cadena').value;
-  const field = document.getElementById('f-field').value;
-  const quiebre = document.getElementById('f-quiebre').value;
-  return allData.filter(r => {
+  var mes = document.getElementById('f-mes').value;
+  var cadena = document.getElementById('f-cadena').value;
+  var field = document.getElementById('f-field').value;
+  var quiebre = document.getElementById('f-quiebre').value;
+  return allData.filter(function(r) {
     if (mes && r.fecha && r.fecha.slice(0,7) !== mes) return false;
     if (cadena && r.cadena !== cadena) return false;
     if (field && r.field !== field) return false;
@@ -209,21 +163,135 @@ function getFiltered() {
   });
 }
 
-function populateMonths() {
-  const months = [...new Set(allData.map(r => r.fecha ? r.fecha.slice(0,7) : null).filter(Boolean))].sort().reverse();
-  const sel = document.getElementById('f-mes');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Todos los meses</option>' + months.map(m => {
-    const [y, mo] = m.split('-');
-    const label = new Date(y, parseInt(mo)-1).toLocaleDateString('es-AR', {month:'long', year:'numeric'});
-    return '<option value="'+m+'"'+(cur===m?' selected':'')+'>'+label+'</option>';
+function populateFilters() {
+  var cadenas = [];
+  allData.forEach(function(r) { if (r.cadena && cadenas.indexOf(r.cadena) < 0) cadenas.push(r.cadena); });
+  cadenas.sort();
+  var selC = document.getElementById('f-cadena');
+  var curC = selC.value;
+  selC.innerHTML = '<option value="">Todas las cadenas</option>' + cadenas.map(function(c) {
+    return '<option value="'+c+'"'+(curC===c?' selected':'')+'>'+c+'</option>';
+  }).join('');
+
+  var months = [];
+  allData.forEach(function(r) { if (r.fecha) { var m = r.fecha.slice(0,7); if (months.indexOf(m) < 0) months.push(m); }});
+  months.sort().reverse();
+  var selM = document.getElementById('f-mes');
+  var curM = selM.value;
+  selM.innerHTML = '<option value="">Todos los meses</option>' + months.map(function(m) {
+    var parts = m.split('-');
+    var label = new Date(parts[0], parseInt(parts[1])-1).toLocaleDateString('es-AR', {month:'long', year:'numeric'});
+    return '<option value="'+m+'"'+(curM===m?' selected':'')+'>'+label+'</option>';
   }).join('');
 }
 
 function renderAll() {
-  renderKPIs();
-  renderCharts();
-  renderTable();
+  var data = getFiltered();
+  renderKPIs(data);
+  renderCharts(data);
+  renderTable(data);
+}
+
+function avg(arr) { return arr.length ? Math.round(arr.reduce(function(a,b){return a+b;},0)/arr.length) : null; }
+
+function renderKPIs(data) {
+  var n = data.length;
+  var bS = data.filter(function(r){return r.share_barras!==''&&r.share_barras!=null;}).map(function(r){return parseFloat(r.share_barras);});
+  var mS = data.filter(function(r){return r.share_milanesas!==''&&r.share_milanesas!=null;}).map(function(r){return parseFloat(r.share_milanesas);});
+  var lS = data.filter(function(r){return r.share_leches!==''&&r.share_leches!=null;}).map(function(r){return parseFloat(r.share_leches);});
+  var q = data.filter(function(r){return r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si';}).length;
+  var sb = avg(bS), sm = avg(mS), sl = avg(lS);
+  document.getElementById('k-visitas').textContent = n;
+  document.getElementById('k-sb').textContent = sb !== null ? sb+'%' : '--';
+  document.getElementById('k-sm').textContent = sm !== null ? sm+'%' : '--';
+  document.getElementById('k-sl').textContent = sl !== null ? sl+'%' : '--';
+  document.getElementById('k-q').textContent = q;
+  function kpiColor(el, v) {
+    el.style.color = v===null?'#888':v>=40?'#1db97a':v>=20?'#f5a623':'#e85d5d';
+  }
+  kpiColor(document.getElementById('k-sb'), sb);
+  kpiColor(document.getElementById('k-sm'), sm);
+  kpiColor(document.getElementById('k-sl'), sl);
+}
+
+function renderCharts(data) {
+  var cadMap = {};
+  data.forEach(function(r) {
+    if (!cadMap[r.cadena]) cadMap[r.cadena] = {bS:0,bN:0,mS:0,mN:0,lS:0,lN:0};
+    if (r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
+    if (r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
+    if (r.share_leches!==''&&r.share_leches!=null){cadMap[r.cadena].lS+=parseFloat(r.share_leches);cadMap[r.cadena].lN++;}
+  });
+  function makeChart(elId, getter, color) {
+    var items = Object.keys(cadMap).map(function(c) {
+      var v = getter(cadMap[c]); return v !== null ? {c:c, v:v} : null;
+    }).filter(Boolean).sort(function(a,b){return b.v-a.v;});
+    var el = document.getElementById(elId);
+    if (!items.length) { el.innerHTML = '<div class="no-data">Sin datos</div>'; return; }
+    el.innerHTML = items.map(function(x) {
+      var c = x.v>=40?'#1db97a':x.v>=20?'#f5a623':'#e85d5d';
+      return '<div class="bar-row">'+
+        '<span class="bar-label" title="'+x.c+'">'+x.c+'</span>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+x.v+'%;background:'+c+'"></div></div>'+
+        '<span class="bar-pct" style="color:'+c+'">'+x.v+'%</span></div>';
+    }).join('');
+  }
+  makeChart('chart-b', function(d){return d.bN?Math.round(d.bS/d.bN):null;}, '#1db97a');
+  makeChart('chart-m', function(d){return d.mN?Math.round(d.mS/d.mN):null;}, '#6c63ff');
+  makeChart('chart-l', function(d){return d.lN?Math.round(d.lS/d.lN):null;}, '#f5a623');
+}
+
+function shareTag(val) {
+  if (val===null||val===undefined||val==='') return '<span class="badge badge-gray">--</span>';
+  var n = parseFloat(val);
+  var cls = n>=40?'badge-green':n>=20?'badge-amber':'badge-red';
+  return '<span class="badge '+cls+'">'+n+'%</span>';
+}
+
+function fotoBtn(url, label) {
+  if (!url||url==='No'||url==='--') return '<span style="color:#ddd;font-size:10px">--</span>';
+  if (url==='Si'||url==='Sí') return '<span style="color:#aaa;font-size:10px">Si</span>';
+  return '<a href="'+url+'" target="_blank" class="foto-btn">📷 '+label+'</a>';
+}
+
+function renderTable(data) {
+  document.getElementById('table-sub').textContent = data.length + ' visitas' + (data.length !== allData.length ? ' (filtradas)' : '');
+  if (!data.length) {
+    document.getElementById('table-wrap').innerHTML = '<div class="empty-state">No hay visitas que coincidan</div>';
+    return;
+  }
+  var html = '<div style="overflow-x:auto"><table>';
+  html += '<thead><tr>';
+  var cols = ['Fecha','Field','Cadena','Sucursal','Share Barras','Share Milanesas','Share Leches','Quiebre','Planograma','Punteras','Checkout','Contacto','Obs Milanesas','Obs Leches','Foto Mil','Foto Barras','Foto Leches'];
+  cols.forEach(function(c){html+='<th>'+c+'</th>';});
+  html += '</tr></thead><tbody>';
+  data.forEach(function(r) {
+    var q = (r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si');
+    var pl = (r.plano_barras==='no'||r.plano_milanesas==='no'||r.plano_leches==='no');
+    html += '<tr>';
+    html += '<td style="font-family:DM Mono,monospace;font-size:11px">'+(r.fecha||'--')+'</td>';
+    html += '<td>'+(r.field||'--')+'</td>';
+    html += '<td><strong>'+(r.cadena||'--')+'</strong></td>';
+    html += '<td style="font-family:DM Mono,monospace">#'+(r.sucursal||'?');
+    if (r.obs_general) html += '<br><span style="font-size:10px;color:#aaa;font-weight:normal">'+r.obs_general+'</span>';
+    html += '</td>';
+    html += '<td>'+shareTag(r.share_barras)+'</td>';
+    html += '<td>'+shareTag(r.share_milanesas)+'</td>';
+    html += '<td>'+shareTag(r.share_leches)+'</td>';
+    html += '<td>'+(q?'<span class="badge badge-red">Si</span>':'<span class="badge badge-green">No</span>')+'</td>';
+    html += '<td>'+(pl?'<span class="badge badge-red">No</span>':'<span class="badge badge-green">Si</span>')+'</td>';
+    html += '<td>'+(r.punteras==='si'?'<span class="badge badge-green">Si</span>':'<span class="badge badge-gray">No</span>')+'</td>';
+    html += '<td>'+(r.exhibiciones==='si'?'<span class="badge badge-green">Si</span>':'<span class="badge badge-gray">No</span>')+'</td>';
+    html += '<td style="font-size:11px;color:#888">'+(r.contacto||'--')+'</td>';
+    html += '<td style="font-size:11px;color:#888;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(r.obs_milanesas||'--')+'</td>';
+    html += '<td style="font-size:11px;color:#888;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(r.obs_leches||'--')+'</td>';
+    html += '<td>'+fotoBtn(r.foto_milanesas,'Mil')+'</td>';
+    html += '<td>'+fotoBtn(r.foto_barras,'Bar')+'</td>';
+    html += '<td>'+fotoBtn(r.foto_leches,'Lec')+'</td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('table-wrap').innerHTML = html;
 }
 
 function clearFilters() {
@@ -234,177 +302,20 @@ function clearFilters() {
   renderAll();
 }
 
-function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
-
-function renderKPIs() {
-  const d = allData;
-  const n = d.length;
-  document.getElementById('k-visitas').textContent = n;
-  const bS = d.filter(r=>r.share_barras!==null&&r.share_barras!=='').map(r=>parseFloat(r.share_barras));
-  const mS = d.filter(r=>r.share_milanesas!==null&&r.share_milanesas!=='').map(r=>parseFloat(r.share_milanesas));
-  const lS = d.filter(r=>r.share_leches!==null&&r.share_leches!=='').map(r=>parseFloat(r.share_leches));
-  const sb = avg(bS); const sm = avg(mS); const sl = avg(lS);
-  document.getElementById('k-sb').textContent = sb !== null ? sb+'%' : '—';
-  document.getElementById('k-sm').textContent = sm !== null ? sm+'%' : '—';
-  document.getElementById('k-sl').textContent = sl !== null ? sl+'%' : '—';
-  document.getElementById('k-q').textContent = d.filter(r=>r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si').length;
-  document.getElementById('k-op').textContent = d.filter(r=>r.oportunidad==='si').length;
-}
-
-function renderCharts() {
-  const cadMap = {};
-  getFiltered().forEach(r => {
-    if (!cadMap[r.cadena]) cadMap[r.cadena] = {bS:0,bN:0,mS:0,mN:0,lS:0,lN:0};
-    if (r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
-    if (r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
-    if (r.share_leches!==''&&r.share_leches!=null){cadMap[r.cadena].lS+=parseFloat(r.share_leches);cadMap[r.cadena].lN++;}
-  });
-
-  function makeChart(elId, getter, color) {
-    const items = Object.entries(cadMap).map(([c,d]) => ({c, v:getter(d)})).filter(x=>x.v!==null).sort((a,b)=>b.v-a.v);
-    if (!items.length) return;
-    document.getElementById(elId).innerHTML = items.map(({c,v}) => `
-      <div class="bar-row">
-        <span class="bar-label" title="${c}">${c}</span>
-        <div class="bar-track"><div class="bar-fill" style="width:${v}%;background:${color}"></div></div>
-        <span class="bar-pct" style="color:${color}">${v}%</span>
-      </div>`).join('');
-  }
-
-  makeChart('chart-barras', d => d.bN ? Math.round(d.bS/d.bN) : null, '#1db97a');
-  makeChart('chart-mil',    d => d.mN ? Math.round(d.mS/d.mN) : null, '#6c63ff');
-  makeChart('chart-lec',    d => d.lN ? Math.round(d.lS/d.lN) : null, '#f5a623');
-}
-
-function fotoBtn(url, label) {
-  if (!url || url === 'No' || url === '—') return '<span style="color:#ccc;font-size:11px">—</span>';
-  if (url === 'Sí') return '<span style="color:#888;font-size:11px">Sí</span>';
-  return `<a href="${url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;background:#f0f0ff;color:#6c63ff;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none">📷 ${label}</a>`;
-}
-
-function shareTag(val) {
-  if (val === null || val === '' || val === undefined) return '<span class="badge badge-gray">—</span>';
-  const n = parseFloat(val);
-  const cls = n>=40?'badge-green':n>=20?'badge-amber':'badge-red';
-  return `<span class="badge ${cls}">${n}%</span>`;
-}
-
-function renderTable() {
-  const data = getFiltered();
-  document.getElementById('table-sub').textContent = data.length + ' visitas' + (data.length !== allData.length ? ' (filtradas)' : '');
-  if (!data.length) {
-    document.getElementById('table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>No hay visitas que coincidan con los filtros</p></div>';
-    return;
-  }
-  document.getElementById('table-wrap').innerHTML = `
-    <div style="overflow-x:auto">
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th><th>Field</th><th>Cadena</th><th>Sucursal</th>
-          <th>Share Barras</th><th>Share Milanesas</th><th>Share Leches</th>
-          <th>Quiebre</th><th>Planograma</th><th>Oportunidad</th><th>Punteras</th><th>Exhibiciones</th><th>Contacto</th><th>Obs. General</th><th>Foto Mil</th><th>Foto Barras</th><th>Foto Leches</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(r => `
-          <tr>
-            <td style="font-family:'DM Mono',monospace;font-size:12px">${r.fecha||'—'}</td>
-            <td>${r.field||'—'}</td>
-            <td><strong>${r.cadena||'—'}</strong></td>
-            <td style="font-family:'DM Mono',monospace">#${r.sucursal||'?'}</td>
-            <td>${shareTag(r.share_barras)}</td>
-            <td>${shareTag(r.share_milanesas)}</td>
-            <td>${shareTag(r.share_leches)}</td>
-            <td>${(r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si')?'<span class="badge badge-red">Sí</span>':'<span class="badge badge-green">No</span>'}</td>
-            <td>${(r.plano_barras==='no'||r.plano_milanesas==='no'||r.plano_leches==='no')?'<span class="badge badge-red">No</span>':'<span class="badge badge-green">Sí</span>'}</td>
-            <td>${r.oportunidad==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
-            <td>${r.punteras==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
-            <td>${r.exhibiciones==='si'?'<span class="badge badge-green">Sí</span>':'<span class="badge badge-gray">No</span>'}</td>
-            <td style="font-size:12px;color:#888">${r.contacto||'—'}</td>
-            <td style="font-size:12px;color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.obs_general||'—'}</td>
-          <td>${fotoBtn(r.foto_milanesas,'Mil')}</td>
-          <td>${fotoBtn(r.foto_barras,'Bar')}</td>
-          <td>${fotoBtn(r.foto_leches,'Lec')}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>
-    </div>`;
-}
-
 function exportExcel() {
-  if (!allData.length) { alert('No hay datos para exportar'); return; }
-  const wb = XLSX.utils.book_new();
-
-  // Hoja datos
-  const headers = ['Fecha','Field','Cadena','Sucursal','Contacto','Repo','Obs General',
-    'Total Milanesas','NotCo Mil','Vegetalex','Granja del Sol','Otros Mil','Share Mil %','Quiebre Mil','Plano Mil','Razon Plano Mil','Obs Mil',
-    'Total Barras','NotCo Barras','Integra','Otros Barras','Share Barras %','Quiebre Barras','Plano Barras','Razon Plano Barras',
-    'Total Leches','NotCo Leches','Competencia Leches','Share Leches %','Quiebre Leches','Plano Leches','Razon Plano Leches','Obs Leches',
-    'Oportunidad','Punteras','Exhibiciones','Notas'];
-
-  const rows = allData.map(r => [
-    r.fecha, r.field, r.cadena, r.sucursal, r.contacto, r.repo, r.obs_general,
-    r.total_cat_milanesas, r.notco_milanesas, r.vegetalex_milanesas, r.granjadelsol_milanesas, r.otros_milanesas, r.share_milanesas, r.quiebre_milanesas, r.plano_milanesas, r.razon_plano_milanesas, r.obs_milanesas,
-    r.total_cat_barras, r.notco_barras, r.integra_barras, r.otros_barras, r.share_barras, r.quiebre_barras, r.plano_barras, r.razon_plano_barras,
-    r.total_cat_leches, r.notco_leches, r.competencia_leches, r.share_leches, r.quiebre_leches, r.plano_leches, r.razon_plano_leches, r.obs_leches,
-    r.oportunidad, r.punteras, r.exhibiciones, r.notas
-  ]);
-
-  const ws1 = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-  ws1['!cols'] = headers.map(h => ({wch: Math.max(12, h.length * 1.1)}));
-  XLSX.utils.book_append_sheet(wb, ws1, 'Datos');
-
-  // Hoja dashboard
-  const cadMap = {};
-  allData.forEach(r => {
-    if (!cadMap[r.cadena]) cadMap[r.cadena] = {n:0,bS:0,bN:0,mS:0,mN:0,lS:0,lN:0,q:0};
-    cadMap[r.cadena].n++;
-    if(r.share_barras!==''&&r.share_barras!=null){cadMap[r.cadena].bS+=parseFloat(r.share_barras);cadMap[r.cadena].bN++;}
-    if(r.share_milanesas!==''&&r.share_milanesas!=null){cadMap[r.cadena].mS+=parseFloat(r.share_milanesas);cadMap[r.cadena].mN++;}
-    if(r.share_leches!==''&&r.share_leches!=null){cadMap[r.cadena].lS+=parseFloat(r.share_leches);cadMap[r.cadena].lN++;}
-    if(r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si') cadMap[r.cadena].q++;
+  if (!allData.length) { alert('No hay datos'); return; }
+  var wb = XLSX.utils.book_new();
+  var headers = ['Fecha','Field','Cadena','Sucursal','Nombre Sucursal','Share Barras %','Share Milanesas %','Share Leches %','Quiebre Barras','Quiebre Milanesas','Quiebre Leches','SKUs Quiebre Barras','SKUs Quiebre Milanesas','SKUs Quiebre Leches','Obs Milanesas','Obs Leches','Punteras','Checkout','Repo'];
+  var rows = allData.map(function(r) {
+    return [r.fecha,r.field,r.cadena,r.sucursal,r.obs_general||'',r.share_barras||'',r.share_milanesas||'',r.share_leches||'',r.quiebre_barras||'',r.quiebre_milanesas||'',r.quiebre_leches||'',r.razon_plano_barras||'',r.razon_plano_milanesas||'',r.razon_plano_leches||'',r.obs_milanesas||'',r.obs_leches||'',r.punteras||'',r.exhibiciones||'',r.repo||''];
   });
-
-  const bShares = allData.filter(r=>r.share_barras!==''&&r.share_barras!=null).map(r=>parseFloat(r.share_barras));
-  const mShares = allData.filter(r=>r.share_milanesas!==''&&r.share_milanesas!=null).map(r=>parseFloat(r.share_milanesas));
-  const lShares = allData.filter(r=>r.share_leches!==''&&r.share_leches!=null).map(r=>parseFloat(r.share_leches));
-
-  const dashData = [
-    ['NOTCO — Dashboard de Visitas Field 2025'],
-    ['Generado: ' + new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')],
-    [''],
-    ['RESUMEN EJECUTIVO'],
-    ['Visitas Totales', 'Share Barras Prom.', 'Share Milanesas Prom.', 'Share Leches Prom.', 'Quiebres', 'Oportunidades'],
-    [
-      allData.length,
-      bShares.length ? Math.round(bShares.reduce((a,b)=>a+b,0)/bShares.length)+'%' : '—',
-      mShares.length ? Math.round(mShares.reduce((a,b)=>a+b,0)/mShares.length)+'%' : '—',
-      lShares.length ? Math.round(lShares.reduce((a,b)=>a+b,0)/lShares.length)+'%' : '—',
-      allData.filter(r=>r.quiebre_barras==='si'||r.quiebre_milanesas==='si'||r.quiebre_leches==='si').length,
-      allData.filter(r=>r.oportunidad==='si').length
-    ],
-    [''],
-    ['SHARE POR CADENA'],
-    ['Cadena', 'Visitas', 'Share Barras %', 'Share Milanesas %', 'Share Leches %', 'Quiebres'],
-    ...Object.entries(cadMap).sort((a,b)=>b[1].n-a[1].n).map(([c,d]) => [
-      c, d.n,
-      d.bN ? Math.round(d.bS/d.bN) : '—',
-      d.mN ? Math.round(d.mS/d.mN) : '—',
-      d.lN ? Math.round(d.lS/d.lN) : '—',
-      d.q
-    ])
-  ];
-
-  const ws2 = XLSX.utils.aoa_to_sheet(dashData);
-  ws2['!cols'] = [{wch:20},{wch:10},{wch:18},{wch:20},{wch:18},{wch:12}];
-  XLSX.utils.book_append_sheet(wb, ws2, 'Dashboard');
-
-  XLSX.writeFile(wb, 'notco_visitas_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  var ws = XLSX.utils.aoa_to_sheet([headers].concat(rows));
+  ws['!cols'] = headers.map(function(h){return{wch:Math.max(12,h.length*1.1)};});
+  XLSX.utils.book_append_sheet(wb, ws, 'Datos');
+  XLSX.writeFile(wb, 'notco_visitas_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
 loadData();
-// Auto-refresh cada 60 segundos
 setInterval(loadData, 60000);
 </script>
 </body>
