@@ -128,7 +128,7 @@ async function loadData() {
       try { localStorage.setItem('notco_admin_cache', JSON.stringify(allData)); } catch(e) {}
     }
     document.getElementById('sdot').style.background = '#1db97a';
-    document.getElementById('status-txt').textContent = 'En linea · ' + allData.length + ' visitas · ' + new Date().toLocaleTimeString('es-AR');
+    document.getElementById('status-txt').textContent = 'En linea · ' + allData.length + ' visitas · ' + new Date().toLocaleDateString('es-AR');
   } catch(e) {
     try {
       var cached = localStorage.getItem('notco_admin_cache');
